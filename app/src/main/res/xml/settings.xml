@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:title="@string/loan"
+        android:key="loan"
+        android:numeric="integer"
+        android:maxLength="9"
+        android:summary="@string/loan_summary"
+        android:name="EditText Preference"
+        android:defaultValue="0"
+        />
+
+    <EditTextPreference
+        android:title="@string/term"
+        android:key="term"
+        android:numeric="integer"
+        android:maxLength="2"
+        android:summary="@string/term_summary"
+        android:name="EditText Preference"
+        android:defaultValue="0"
+        />
+
+    <EditTextPreference
+        android:title="@string/interest"
+        android:key="interest"
+        android:numeric="integer"
+        android:maxLength="4"
+        android:summary="@string/interest_summary"
+        android:name="EditText Preference"
+        android:defaultValue="0"
+        />
+
+<!--<PreferenceCategory android:title="@string/pref_loan_type">
+
+        <CheckBoxPreference
+            android:title="Even Total Payments"
+            android:defaultValue="1"
+            android:key="eventotal"
+            />
+
+        <CheckBoxPreference
+            android:title="Even Principal Payments"
+            android:defaultValue="0"
+            android:key="evenproncipal"
+            />
+
+    </PreferenceCategory>-->
+
+
+</PreferenceScreen>

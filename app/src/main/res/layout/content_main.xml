@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_content_layer"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ADADAD"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="pw.lena.loancalculator.MainActivity"
+    tools:showIn="@layout/app_bar_main">
+
+
+
+    <TextView
+        android:id="@+id/display"
+        android:background="@color/primary_light"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:layout_gravity="right"
+        android:cursorVisible="true"
+        android:textColorHint="@color/icons"
+
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+
+        android:text="@string/zero"
+        android:textColor="@color/primary_text"
+        android:textSize="60sp"
+        android:maxLines="1"
+
+        tools:layout_constraintRight_creator="1"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_constraintLeft_creator="1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+    <TextView
+        android:id="@+id/loan"
+        android:background="@color/primary_light"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="left|top"
+        android:cursorVisible="false"
+        android:textColorHint="@color/icons"
+
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+
+        android:text="@string/zero"
+        android:textColor="@color/primary_text"
+        android:textSize="10sp"
+        android:maxLines="1"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/term"
+
+        />
+    <TextView
+        android:id="@+id/term"
+        android:background="@color/primary_light"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="left|top"
+        android:layout_gravity="right"
+        android:cursorVisible="false"
+        android:textColorHint="@color/icons"
+
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+
+        android:text="@string/zero"
+        android:textColor="@color/primary_text"
+        android:textSize="10sp"
+        android:maxLines="1"
+
+        app:layout_constraintLeft_toRightOf="@+id/loan"
+        app:layout_constraintRight_toLeftOf="@+id/interest"/>
+
+    <TextView
+        android:id="@+id/interest"
+        android:background="@color/primary_light"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="left|top"
+        android:layout_gravity="right"
+        android:cursorVisible="false"
+        android:textColorHint="@color/icons"
+
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+
+        android:text="@string/zero"
+        android:textColor="@color/primary_text"
+        android:textSize="10sp"
+        android:maxLines="1"
+
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/term"  />
+
+
+    <Button
+        android:id="@+id/btn_seven"
+        style="@style/pinKeyboard"
+        android:text="7"
+        app:layout_constraintTop_toBottomOf="@+id/display"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/btn_eight"
+         />
+
+    <Button
+        android:id="@+id/btn_eight"
+        style="@style/pinKeyboard"
+        android:text="8"
+        app:layout_constraintTop_toBottomOf="@+id/display"
+        app:layout_constraintLeft_toRightOf="@+id/btn_seven"
+        app:layout_constraintRight_toLeftOf="@+id/btn_nine"
+         />
+
+    <Button
+        android:id="@+id/btn_nine"
+        style="@style/pinKeyboard"
+        android:text="9"
+        app:layout_constraintTop_toBottomOf="@+id/display"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/btn_eight" />
+
+
+                        <!-- second-->
+
+    <Button
+        android:id="@+id/btn_four"
+        app:layout_constraintTop_toBottomOf="@+id/btn_seven"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/btn_five"
+        style="@style/pinKeyboard"
+        android:text="4" />
+
+    <Button
+        android:id="@+id/btn_five"
+        style="@style/pinKeyboard"
+        app:layout_constraintTop_toBottomOf="@+id/btn_eight"
+        app:layout_constraintLeft_toRightOf="@+id/btn_six"
+        app:layout_constraintRight_toLeftOf="@+id/btn_four"
+        android:text="5" />
+
+    <Button
+        android:id="@+id/btn_six"
+        style="@style/pinKeyboard"
+        app:layout_constraintTop_toBottomOf="@+id/btn_nine"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/btn_five"
+        android:text="6" />
+
+            <!-- third -->
+    <Button
+        android:id="@+id/btn_one"
+        app:layout_constraintTop_toBottomOf="@+id/btn_four"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/btn_two"
+        style="@style/pinKeyboard"
+        android:text="1" />
+
+    <Button
+        android:id="@+id/btn_two"
+        style="@style/pinKeyboard"
+        app:layout_constraintTop_toBottomOf="@+id/btn_five"
+        app:layout_constraintLeft_toRightOf="@+id/btn_three"
+        app:layout_constraintRight_toLeftOf="@+id/btn_one"
+        android:text="2" />
+
+    <Button
+        android:id="@+id/btn_three"
+        style="@style/pinKeyboard"
+        app:layout_constraintTop_toBottomOf="@+id/btn_six"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/btn_two"
+        android:text="3" />
+
+        <!-- forth-->
+
+    <Button
+        android:id="@+id/btn_clear"
+        app:layout_constraintTop_toBottomOf="@+id/btn_one"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/btn_zero"
+        style="@style/pinKeyboard"
+        android:text="X" />
+
+    <Button
+        android:id="@+id/btn_zero"
+        style="@style/pinKeyboard"
+        app:layout_constraintTop_toBottomOf="@+id/btn_two"
+        app:layout_constraintLeft_toRightOf="@+id/btn_clear"
+        app:layout_constraintRight_toLeftOf="@+id/btn_back"
+        android:text="0" />
+
+    <Button
+        android:id="@+id/btn_back"
+        style="@style/pinKeyboard"
+        app:layout_constraintTop_toBottomOf="@+id/btn_three"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/btn_zero"
+        android:text="&#x25C0;" />
+
+
+
+</android.support.constraint.ConstraintLayout>

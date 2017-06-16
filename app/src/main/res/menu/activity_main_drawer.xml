@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_schedule"
+            android:icon="@drawable/ic_action_schedule"
+            android:title="@string/payment_schedule" />
+        <item
+            android:id="@+id/nav_chart"
+            android:icon="@drawable/ic_action_chart"
+            android:title="@string/payment_chart" />
+        <item
+            android:id="@+id/nav_diagram"
+            android:icon="@drawable/ic_action_diagram"
+            android:title="@string/payment_diagram" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share" />
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Send" />
+        </menu>
+    </item>
+
+</menu>
