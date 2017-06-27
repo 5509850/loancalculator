@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html ng-app="App">
+<head>
+    <title>Loan Calculator</title>
+
+    <script src="angular.min.js"></script>
+    <script src="calce.js"></script>
+    <script src="anychart-bundle.min.js"></script>
+
+    <link href="MyStyleSheet.css" rel="stylesheet" />
+    <link href="bootstrap.css" rel="stylesheet" />
+    <link href="bootstrap-theme.css" rel="stylesheet" />
+    <link href="anychart-ui.min.css" rel="stylesheet" />
+
+    <style>
+        html, body, #diagram {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+
+
+    <link media="print" rel="stylesheet" href="angularPrint.css">
+    <script src="angularPrint.js"></script>
+
+</head>
+<body style="background:url(back.png)" ng-controller="CourceListCtrl">
+<div print-section class="container">
+    <div class="page-header">
+        <h1 style="color:white">
+            Loan Calculator
+        </h1>
+    </div>
+    <div align="right"><button print-btn style="align-content:flex-end;" class="btn-danger">Print</button></div>
+
+    <div class="panel"  ng-show="result">
+        <table class="table table-hover">
+            <tr>
+                <th><h4>Result:</h4></th>
+                <th><h5>${{amountText}} Loan, {{apr}}% Annual Interest</h5></th>
+                <th><h5>{{count}} Monthly Payments  <span ng-show="commisShow">(${{commis}} Monthly Maintenance Fee)</span></h5></th>
+            </tr>
+            <tr>
+                <td>{{paymentMonth}}</td>
+                <td>$<span class="output" id="payment">{{monthly}}</span></td>
+                <td rowspan=7><div id="diagram"></div></td>
+            </tr>
+            <tr ng-show="lasttr">
+                <td>{{lastMonth}}</td>
+                <td>$<span class="output" id="payment">{{lastmonthly}}</span></td>
+            </tr>
+            <tr>
+                <td>Total Interest:</td>
+                <td>$<span class="output" id="totalinterest">{{percent}}</span> </td>
+            </tr>
+            <tr>
+                <td>Total Fee:</td>
+                <td>$<span class="output" id="totalfee">{{fee}}</span> </td>
+            </tr>
+            <tr>
+                <td>Total Interest + Fee:</td>
+                <td>$<span class="output" id="totalfeepercent">{{feepercent}}</span></td>
+            </tr>
+            <tr>
+                <td style="font-size:large">Total of {{count}} payments:</td>
+                <td style="font-size:large">$<span class="output" id="total">{{total}}</span></td>
+            </tr>
+        </table>
+    </div>
+
+    <div  ng-show="result" class="panel">
+        <div>
+            <table class="table table-hover">
+                <thead>
+                <tr class="well">
+                    <th>Month</th>
+                    <th>Beginning Balance</th>
+                    <th>Interest + Fee</th>
+                    <th>Principal</th>
+                    <th>Total Payment</th>
+                    <th>@</th>
+                    <th>Paid</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr ng-repeat="payment in data.payments" class="{{payment.style}}" style="font-size:{{payment.font}}">
+                    <td>
+                        {{payment.month}}
+                    </td>
+                    <td>
+                        {{payment.amount}}
+                    </td>
+                    <td>
+                        {{payment.perc}}
+                    </td>
+                    <td>
+                        {{payment.main}}
+                    </td>
+                    <td style="font-weight:bold">
+                        {{payment.pay}}
+                    </td>
+                    <td>
+                        <input type="checkbox" ng-model="payment.passed" />
+                    </td>
+                    <td>
+                                    <span style="{{setStyle(payment.passed)}}">
+                                        {{showText(payment.passed)}}
+                                    </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+</body>
+</html>

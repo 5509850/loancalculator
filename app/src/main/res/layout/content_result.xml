@@ -8,10 +8,20 @@
     tools:context="pw.lena.loancalculator.ResultActivity"
     tools:showIn="@layout/activity_result">
 
+    <WebView
+           android:id="@+id/resultWebView"
+           android:layout_width="match_parent"
+           android:layout_height="0dp"
+           android:layout_weight="1"
+           >
+       </WebView>
+    <!--
     <TextView
+        android:id="@+id/texttt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
         android:text="@string/large_text" />
+        -->
 
 </android.support.v4.widget.NestedScrollView>

@@ -2,12 +2,18 @@ package pw.lena.loancalculator;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -33,7 +39,7 @@ import static pw.lena.loancalculator.Prefs.getTerm;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
-
+    private static final String TAG = "MainActivity";
     private String currentInput = "";
     private TextView display, loan, term, interest;
     private Button one, two, three, four, five, six, seven, eight, nine, zero, clear, back;
@@ -118,7 +124,8 @@ public class MainActivity extends AppCompatActivity
 
     private boolean PreviousStep() {
         String mess = "Replace with your own action2";
-
+        Log.i(TAG, "status is before PreviousStep" + status);
+        try{
         if (status == Status.Loan)
         {
             return true;
@@ -152,54 +159,69 @@ public class MainActivity extends AppCompatActivity
             Snackbar.make(snapView, mess, Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         }
+        }
+        catch (Exception ex)
+        {
+            Log.e(TAG, "error PreviousStep" + ex.getMessage());
+        }
+        Log.i(TAG, "status is after PreviousStep" + status);
         return false;
     }
 
     private void NextStep(View view) {
+        Log.i(TAG, "before NextStep status is " + status);
         String mess = "Replace with your own action";
-        if (currentInput == null || currentInput.equals(""))
-        {
-            Snackbar.make(view, getString(R.string.emptyval), Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
-            mVibrator.vibrate(
-                    new long[]{0l, VIBRATE_MILLIS,
-                            50l, VIBRATE_MILLIS,
-                            50l, VIBRATE_MILLIS},
-                    -1);
-            Animation shake = AnimationUtils.loadAnimation(context,
-                    R.anim.shake);
-            mainLayer.startAnimation(shake);
-            return;
-        }
-        if (status == Status.Loan)
-        {
-            SaveLoan();
-            status = Status.Term;
-            mess = getString(R.string.loanterm);
-            currentInput = Prefs.getTerm(context).toString();
-            display.setText(NumberFormat.getIntegerInstance().format(Prefs.getTerm(context)));
-            this.setTitle(R.string.term_summary);
-        }
-        else {
-            if (status == Status.Term) {
-                currentInput = "";
-                SaveTerm();
-                status = Status.Interest;
-                mess = getString(R.string.interest_desc);
-                currentInput =  getInterest(context).toString();
-                display.setText(NumberFormat.getIntegerInstance().format(Prefs.getInterest(context)));
-                this.setTitle(R.string.interest_summary);
-            } else if (status == Status.Interest) {
-                SaveInterest();
-                mess = getString(R.string.result);
-                currentInput = "";
-                display.setText(getString(R.string.zero));
-                this.setTitle(R.string.result);
-                status = Status.Loan;
-                startActivity(new Intent(this, ResultActivity.class));
+        try {
+            if (currentInput == null || currentInput.equals("")) {
+                Snackbar.make(view, getString(R.string.emptyval), Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                mVibrator.vibrate(
+                        new long[]{0l, VIBRATE_MILLIS,
+                                50l, VIBRATE_MILLIS,
+                                50l, VIBRATE_MILLIS},
+                        -1);
+                Animation shake = AnimationUtils.loadAnimation(context,
+                        R.anim.shake);
+                mainLayer.startAnimation(shake);
+                return;
+            }
+            if (status == Status.Loan) {
+                //          SaveLoan();
+                status = Status.Term;
+                mess = getString(R.string.loanterm);
+                //        currentInput = Prefs.getTerm(context).toString();
+                //         display.setText(NumberFormat.getIntegerInstance().format(Prefs.getTerm(context)));
+                this.setTitle(R.string.term_summary);
+            } else {
+                if (status == Status.Term) {
+                    currentInput = "";
+                    //  SaveTerm();
+                    status = Status.Interest;
+                    mess = getString(R.string.interest_desc);
+                    //      currentInput =  getInterest(context).toString();
+                    //   display.setText(NumberFormat.getIntegerInstance().format(Prefs.getInterest(context)));
+                    this.setTitle(R.string.interest_summary);
+                } else if (status == Status.Interest) {
+                    //            SaveInterest();
+                    mess = getString(R.string.result);
+                    currentInput = "";
+                    status = Status.Ready;
+                    display.setText(getString(R.string.zero));
+                    this.setTitle(R.string.result);
+                    status = Status.Loan;
+                    //    startActivity(new Intent(this, ResultActivity.class));
+                    Toast.makeText(context, "info", Toast.LENGTH_LONG);
+                } else if (status == Status.Ready) {
+                    mess = "ready";
+                    Toast.makeText(context, "ready", Toast.LENGTH_LONG);
+                }
             }
         }
-
+        catch (Exception ex)
+        {
+            Log.e(TAG, "error NextStep" + ex.getMessage());
+        }
+        Log.i(TAG, "after NextStep status is " + status);
         Snackbar.make(view, mess, Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
     }
@@ -504,71 +526,58 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void ShowInfo(int id) {
-        if (status == Status.Loan)
-        {
-            if (!currentInput.equals(""))
-            {
-                loan.setText("Loan: $" + NumberFormat.getIntegerInstance().format(_loan));
-            }
-            else
-            {
-                if (id ==  R.id.btn_back || id == R.id.btn_clear)
-                {
-                    loan.setText("");
+        try {
+            if (status == Status.Loan) {
+                if (!currentInput.equals("")) {
+                    loan.setText("Loan: $" + NumberFormat.getIntegerInstance().format(_loan));
+                } else {
+                    if (id == R.id.btn_back || id == R.id.btn_clear) {
+                        loan.setText("");
+                    }
                 }
-            }
-        }
-        else
-            if (status == Status.Term)
-            {
-                if (!currentInput.equals(""))
-                {
+            } else if (status == Status.Term) {
+                if (!currentInput.equals("")) {
                     term.setText("Loan term: " + _term + " years");
-                }
-                else
-                {
-                    if (id ==  R.id.btn_back || id == R.id.btn_clear)
-                    {
+                } else {
+                    if (id == R.id.btn_back || id == R.id.btn_clear) {
                         term.setText("");
                     }
                 }
-            }
-            else
-            if (status == Status.Interest)
-            {
-                if (!currentInput.equals(""))
-                {
+            } else if (status == Status.Interest) {
+                if (!currentInput.equals("")) {
                     interest.setText("Interest rate per year:" + _interest + "%");
-                }
-                else
-                {
-                    if (id ==  R.id.btn_back || id == R.id.btn_clear)
-                    {
+                } else {
+                    if (id == R.id.btn_back || id == R.id.btn_clear) {
                         interest.setText("");
                     }
                 }
             }
+        }
+        catch (Exception ex)
+        {
+            Log.e(TAG, "error ShowInfo" + ex.getMessage());
+            Log.i(TAG, "status is" + status);
+        }
 
     }
 
     private void Pressed(String digit) {
-        currentInput += digit;
-        int i = Integer.parseInt(currentInput);
-        if (status == Status.Loan)
-        {
-            _loan = i;
-        }
-        else
-            if (status == Status.Term)
-        {
-            _term = i;
-        }
-        else
-            if (status == Status.Interest)
-            {
+        try {
+            currentInput += digit;
+            int i = Integer.parseInt(currentInput);
+            if (status == Status.Loan) {
+                _loan = i;
+            } else if (status == Status.Term) {
+                _term = i;
+            } else if (status == Status.Interest) {
                 _interest = i;
             }
-        display.setText(NumberFormat.getIntegerInstance().format(i));
+            display.setText(NumberFormat.getIntegerInstance().format(i));
+        }
+        catch (Exception ex)
+        {
+            Log.e(TAG, "error Pressed" + ex.getMessage());
+        }
     }
 
     private boolean isDigitFull(String dig)
@@ -589,9 +598,107 @@ public class MainActivity extends AppCompatActivity
             //&& str.charAt(str.length() - 1) == 'x'
             str = str.substring(0, str.length() - 1);
         }
+        else
+        {
+            if (str == null)
+            {
+             return "";
+            }
+        }
         return str;
     }
 
+    //---------------------------------------GPS
+    private void turnGPSOn(){
+        String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_MODE);
+
+        if(!provider.contains("gps")){ //if gps is disabled
+            final Intent poke = new Intent();
+            poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
+            poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
+            poke.setData(Uri.parse("3"));
+            sendBroadcast(poke);
+        }
+    }
+
+    private void turnGPSOff(){
+    //    String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+        String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_MODE);
+        if(provider.contains("gps")){ //if gps is enabled
+            final Intent poke = new Intent();
+            poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
+            poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
+            poke.setData(Uri.parse("3")); //may be 2 for battary saving
+            sendBroadcast(poke);
+        }
+    }
+
+    private boolean canToggleGPS() {
+        PackageManager pacman = getPackageManager();
+        PackageInfo pacInfo = null;
+
+        try {
+            pacInfo = pacman.getPackageInfo("com.android.settings", PackageManager.GET_RECEIVERS);
+        } catch (Exception e) {
+            return false; //package not found
+        }
+
+        if(pacInfo != null){
+            for(ActivityInfo actInfo : pacInfo.receivers){
+                //test if recevier is exported. if so, we can toggle GPS.
+                if(actInfo.name.equals("com.android.settings.widget.SettingsAppWidgetProvider") && actInfo.exported){
+                    return true;
+                }
+            }
+        }
+
+        return false; //default
+    }
+
+    public void _turnGPSOn()
+    {
+        Intent intent = new Intent("android.location.GPS_ENABLED_CHANGE");
+        intent.putExtra("enabled", true);
+        this.context.sendBroadcast(intent);
+
+        String provider = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+        if(!provider.contains("gps")){ //if gps is disabled
+            final Intent poke = new Intent();
+            poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
+            poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
+            poke.setData(Uri.parse("3"));
+            this.context.sendBroadcast(poke);
+
+
+        }
+    }
+    // automatic turn off the gps
+    public void _turnGPSOff()
+    {
+        String provider = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+        if(provider.contains("gps")){ //if gps is enabled
+            final Intent poke = new Intent();
+            poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
+            poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
+            poke.setData(Uri.parse("3"));
+            this.context.sendBroadcast(poke);
+        }
+    }
+
+    /*/GPS
+////ENABLE GPS:
+
+Intent intent=new Intent("android.location.GPS_ENABLED_CHANGE");
+intent.putExtra("enabled", true);
+sendBroadcast(intent);
+
+///DISABLE GPS:
+
+Intent intent = new Intent("android.location.GPS_ENABLED_CHANGE");
+intent.putExtra("enabled", false);
+sendBroadcast(intent);
+
+     */
 
 }
 
