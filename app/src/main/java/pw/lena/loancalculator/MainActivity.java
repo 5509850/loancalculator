@@ -185,31 +185,34 @@ public class MainActivity extends AppCompatActivity
                 mainLayer.startAnimation(shake);
                 return;
             }
+
+            Log.w(TAG, "before NextStep currentInput " + currentInput);
+
             if (status == Status.Loan) {
-                //          SaveLoan();
+                SaveLoan();
                 status = Status.Term;
                 mess = getString(R.string.loanterm);
-                //        currentInput = Prefs.getTerm(context).toString();
-                //         display.setText(NumberFormat.getIntegerInstance().format(Prefs.getTerm(context)));
+                currentInput = Prefs.getTerm(context).toString();
+                display.setText(NumberFormat.getIntegerInstance().format(Prefs.getTerm(context)));
                 this.setTitle(R.string.term_summary);
             } else {
                 if (status == Status.Term) {
                     currentInput = "";
-                    //  SaveTerm();
+                    SaveTerm();
                     status = Status.Interest;
                     mess = getString(R.string.interest_desc);
-                    //      currentInput =  getInterest(context).toString();
-                    //   display.setText(NumberFormat.getIntegerInstance().format(Prefs.getInterest(context)));
+                    currentInput =  getInterest(context).toString();
+                    display.setText(NumberFormat.getIntegerInstance().format(Prefs.getInterest(context)));
                     this.setTitle(R.string.interest_summary);
                 } else if (status == Status.Interest) {
-                    //            SaveInterest();
+                    SaveInterest();
                     mess = getString(R.string.result);
                     currentInput = "";
                     status = Status.Ready;
                     display.setText(getString(R.string.zero));
                     this.setTitle(R.string.result);
                     status = Status.Loan;
-                    //    startActivity(new Intent(this, ResultActivity.class));
+                    // startActivity(new Intent(this, ResultActivity.class));
                     Toast.makeText(context, "info", Toast.LENGTH_LONG);
                 } else if (status == Status.Ready) {
                     mess = "ready";
@@ -219,9 +222,10 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception ex)
         {
-            Log.e(TAG, "error NextStep" + ex.getMessage());
+            Log.e(TAG, "error NextStep " + ex.getMessage());
         }
         Log.i(TAG, "after NextStep status is " + status);
+        Log.w(TAG, "after NextStep currentInput " + currentInput);
         Snackbar.make(view, mess, Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
     }
@@ -296,7 +300,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void SaveStatus() {
-        Prefs.setStatus(this, status.name());
+        try {
+            Prefs.setStatus(this, status.name());
+        }
+            catch(Exception ex)
+            {
+                Log.e(TAG, "error SaveStatus " + ex.getMessage());
+            }
     }
 
     private void SaveLoan() {
@@ -306,6 +316,7 @@ public class MainActivity extends AppCompatActivity
             }
             catch (Exception ex)
             {
+                Log.e(TAG, "error SaveLoan " + ex.getMessage());
                 Toast.makeText(context, ex.getMessage(), Toast.LENGTH_LONG);
             }
     }
@@ -316,7 +327,8 @@ public class MainActivity extends AppCompatActivity
             }
             catch (Exception ex)
             {
-             Toast.makeText(context, ex.getMessage(), Toast.LENGTH_LONG);
+                Log.e(TAG, "error SaveTerm " + ex.getMessage());
+                Toast.makeText(context, ex.getMessage(), Toast.LENGTH_LONG);
             }
     }
 
@@ -326,6 +338,7 @@ public class MainActivity extends AppCompatActivity
             }
             catch (Exception ex)
             {
+                Log.e(TAG, "error SaveInterest " + ex.getMessage());
                 Toast.makeText(context, ex.getMessage(), Toast.LENGTH_LONG);
             }
     }

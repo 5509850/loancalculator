@@ -102,10 +102,10 @@ public class Prefs extends PreferenceActivity
                 .getInt(OPT_INTEREST, OPT_INTEREST_DEF);
     }
 
-    public static void setInterest(Context context, float interest)
+    public static void setInterest(Context context, Integer interest)
     {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
-        editor.putFloat(OPT_INTEREST, interest);
+        editor.putInt(OPT_INTEREST, interest);
         editor.commit();
     }
 
