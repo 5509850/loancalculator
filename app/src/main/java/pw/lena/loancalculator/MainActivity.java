@@ -6,7 +6,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.provider.Settings;
@@ -28,10 +27,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.text.NumberFormat;
-
-import static android.R.attr.id;
 import static pw.lena.loancalculator.Prefs.getInterest;
 import static pw.lena.loancalculator.Prefs.getTerm;
 
@@ -60,9 +56,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,7 +112,7 @@ public class MainActivity extends AppCompatActivity
         status = Status.Loan;
 
         this.setTitle(R.string.loan_summary);
-      // LoadDefaultSavedData();
+        LoadDefaultSavedData();
     }
 
 
@@ -151,7 +145,7 @@ public class MainActivity extends AppCompatActivity
             display.setText(NumberFormat.getIntegerInstance().format(_term));
             this.setTitle(R.string.term_summary);
             status = Status.Term;
-            startActivity(new Intent(this, ResultActivity.class));
+           // startActivity(new Intent(this, ResultActivity.class));
         }
 
         if (snapView != null)
@@ -212,7 +206,7 @@ public class MainActivity extends AppCompatActivity
                     display.setText(getString(R.string.zero));
                     this.setTitle(R.string.result);
                     status = Status.Loan;
-                    // startActivity(new Intent(this, ResultActivity.class));
+                    startActivity(new Intent(this, ResultActivity.class));
                     Toast.makeText(context, "info", Toast.LENGTH_LONG);
                 } else if (status == Status.Ready) {
                     mess = "ready";
@@ -231,58 +225,24 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void LoadDefaultSavedData() {
-        try{
-                //currentInput = Prefs.getLoan(this).toString();
-
-                _loan = Prefs.getLoan(this);
-                if (_loan == 0)
-                {
-                    loan.setText("");
-                }
-                else
-                {
-                    loan.setText("Loan: $" + NumberFormat.getIntegerInstance().format(_loan));
-                }
-            _term = getTerm(this);
-            if (_term == 0)
-            {
-                term.setText("");
-            }
-            else
-            {
-                term.setText("Loan term in years: " + _term);
-            }
+        try {
+            _loan = Prefs.getLoan(this);
+            _term = Prefs.getTerm(this);
             _interest = Prefs.getInterest(this);
-            if (_interest == 0)
-            {
-                interest.setText("");
-            }
-            else
-            {
-                interest.setText("Interest rate:" + String.format("%.2f", _interest) + "%");
-            }
+            currentInput = _loan.toString();
 
-            if (status == Status.Loan)
+            loan.setText("Loan: $" + NumberFormat.getIntegerInstance().format(_loan));
+            term.setText("Term: " + _term + " years");
+            interest.setText("Interest:" + _interest + "%");
+            if (_loan != 0)
             {
-                currentInput = _loan.toString();
                 display.setText(NumberFormat.getIntegerInstance().format(_loan));
-            }
-            else
-            if (status == Status.Term)
-            {
-                currentInput = _term.toString();
-                display.setText(NumberFormat.getIntegerInstance().format(_term));
-            }
-            else
-            if (status == Status.Interest)
-            {
-                currentInput = _interest.toString();
-                display.setText(NumberFormat.getIntegerInstance().format(_interest));
             }
         }
         catch (Exception ex)
         {
-         Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG);
+            Toast.makeText(context, ex.getMessage(), Toast.LENGTH_LONG);
+            Log.e(TAG, "error LoadDefaultSavedData " + ex.getMessage());
         }
     }
 
@@ -310,7 +270,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void SaveLoan() {
-
+            if (_loan == 0)
+            {
+                return;
+            }
             try {
                 Prefs.setLoan(this, _loan);
             }
@@ -322,6 +285,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void SaveTerm() {
+            if (_term == 0)
+            {
+                return;
+            }
             try{
                 Prefs.setTerm(this, _term);
             }
@@ -333,6 +300,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void SaveInterest() {
+            if (_interest == 0)
+            {
+                return;
+            }
             try {
                 Prefs.setInterest(this, _interest);
             }
@@ -342,7 +313,6 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(context, ex.getMessage(), Toast.LENGTH_LONG);
             }
     }
-
 
 
     @Override
@@ -542,7 +512,7 @@ public class MainActivity extends AppCompatActivity
         try {
             if (status == Status.Loan) {
                 if (!currentInput.equals("")) {
-                    loan.setText("Loan: $" + NumberFormat.getIntegerInstance().format(_loan));
+                    loan.setText("Amount: $" + NumberFormat.getIntegerInstance().format(_loan));
                 } else {
                     if (id == R.id.btn_back || id == R.id.btn_clear) {
                         loan.setText("");
@@ -550,7 +520,7 @@ public class MainActivity extends AppCompatActivity
                 }
             } else if (status == Status.Term) {
                 if (!currentInput.equals("")) {
-                    term.setText("Loan term: " + _term + " years");
+                    term.setText("Term: " + _term + " years");
                 } else {
                     if (id == R.id.btn_back || id == R.id.btn_clear) {
                         term.setText("");
@@ -558,7 +528,7 @@ public class MainActivity extends AppCompatActivity
                 }
             } else if (status == Status.Interest) {
                 if (!currentInput.equals("")) {
-                    interest.setText("Interest rate per year:" + _interest + "%");
+                    interest.setText("Interest: " + _interest + "%");
                 } else {
                     if (id == R.id.btn_back || id == R.id.btn_clear) {
                         interest.setText("");

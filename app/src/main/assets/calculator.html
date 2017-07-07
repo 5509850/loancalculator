@@ -3,14 +3,16 @@
 <head>
     <title>Loan Calculator</title>
 
-    <script src="angular.min.js"></script>
-    <script src="calce.js"></script>
-    <script src="anychart-bundle.min.js"></script>
+    <script src="file:///android_asset/angular.min.js"></script>
+    <script src="file:///android_asset/calce.js"></script>
+    <script src="file:///android_asset/anychart-bundle.min.js"></script>
 
-    <link href="MyStyleSheet.css" rel="stylesheet" />
-    <link href="bootstrap.css" rel="stylesheet" />
-    <link href="bootstrap-theme.css" rel="stylesheet" />
-    <link href="anychart-ui.min.css" rel="stylesheet" />
+
+
+    <link href="file:///android_asset/MyStyleSheet.css" rel="stylesheet" />
+    <link href="file:///android_asset/bootstrap.css" rel="stylesheet" />
+    <link href="file:///android_asset/bootstrap-theme.css" rel="stylesheet" />
+    <link href="file:///android_asset/anychart-ui.min.css" rel="stylesheet" />
 
     <style>
         html, body, #diagram {
@@ -22,18 +24,17 @@
     </style>
 
 
-    <link media="print" rel="stylesheet" href="angularPrint.css">
-    <script src="angularPrint.js"></script>
+    <link media="print" rel="stylesheet" href="file:///android_asset/angularPrint.css">
+    <script src="file:///android_asset/angularPrint.js"></script>
 
 </head>
-<body style="background:url(back.png)" ng-controller="CourceListCtrl">
+<body style="background:url(file:///android_asset/back.png)" ng-controller="CourceListCtrl">
 <div print-section class="container">
     <div class="page-header">
         <h1 style="color:white">
             Loan Calculator
         </h1>
     </div>
-    <div align="right"><button print-btn style="align-content:flex-end;" class="btn-danger">Print</button></div>
 
     <div class="panel"  ng-show="result">
         <table class="table table-hover">
