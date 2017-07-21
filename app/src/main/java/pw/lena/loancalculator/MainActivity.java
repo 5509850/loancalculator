@@ -200,17 +200,16 @@ public class MainActivity extends AppCompatActivity
                     this.setTitle(R.string.interest_summary);
                 } else if (status == Status.Interest) {
                     SaveInterest();
-                    mess = getString(R.string.result);
-                    currentInput = "";
-                    status = Status.Ready;
-                    display.setText(getString(R.string.zero));
-                    this.setTitle(R.string.result);
                     status = Status.Loan;
+                    Animation fade = AnimationUtils.loadAnimation(context,
+                            R.anim.fade_in);
+                    mainLayer.startAnimation(fade);
+                    LoadDefaultSavedData();
                     startActivity(new Intent(this, ResultActivity.class));
-                    Toast.makeText(context, "info", Toast.LENGTH_LONG);
-                } else if (status == Status.Ready) {
-                    mess = "ready";
-                    Toast.makeText(context, "ready", Toast.LENGTH_LONG);
+                }
+                else if (status == Status.Ready)
+                {
+                    LoadDefaultSavedData();
                 }
             }
         }
@@ -488,10 +487,27 @@ public class MainActivity extends AppCompatActivity
                 if (currentInput.equals(""))
                 {
                     display.setText(R.string.zero);
+                    if (status == Status.Loan) {
+                        _loan = 0;
+                    } else if (status == Status.Term) {
+                        _term = 0;
+                    } else if (status == Status.Interest) {
+                        _interest = 0;
+                    }
+                    display.setText(NumberFormat.getIntegerInstance().format(0));
                 }
                 else
                 {
                     display.setText(currentInput);
+                    int i = Integer.parseInt(currentInput);
+                    if (status == Status.Loan) {
+                        _loan = i;
+                    } else if (status == Status.Term) {
+                        _term = i;
+                    } else if (status == Status.Interest) {
+                        _interest = i;
+                    }
+                    display.setText(NumberFormat.getIntegerInstance().format(i));
                 }
                 break;
             }

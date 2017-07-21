@@ -18,18 +18,23 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.Principal;
 import java.text.NumberFormat;
 
 import static android.R.attr.y;
 import static java.sql.Types.ARRAY;
 import static pw.lena.loancalculator.MainActivity.Status.Interest;
+import static pw.lena.loancalculator.MainActivity.Status.Loan;
 import static pw.lena.loancalculator.R.id.textbody;
+import static pw.lena.loancalculator.R.string.result;
 
-public class ResultActivity extends Activity {
+public class ResultActivity extends AppCompatActivity  {
 
     private static final String TAG = "ResultActivity";
-    private TextView textbody;
-    private  WebView wv;
+    private TextView textbody, textbody2;
+    private  WebView chart;
+    private  WebView diagram;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,22 +42,14 @@ public class ResultActivity extends Activity {
         try {
             setContentView(R.layout.activity_result);
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-         //   setSupportActionBar(toolbar);
+            setSupportActionBar(toolbar);
 
             textbody = (TextView) findViewById(R.id.textbody);
+            textbody2 = (TextView) findViewById(R.id.textbody2);
             //final LinearLayout linearLayoutResult = (LinearLayout) findViewById(R.id.linearLayoutResult);
 
-            wv = (WebView) findViewById(R.id.resultWebView);
-
-            /*
-            for( int i = 0; i < 10; i++ )
-            {
-                TextView textView = new TextView(this);
-                textView.setText("now number is  " + i);
-                linearLayoutResult.addView(textView);
-            }
-            */
-
+            chart = (WebView) findViewById(R.id.chartWebView);
+            diagram = (WebView) findViewById(R.id.diagramWebView);
 
 
         }
@@ -75,44 +72,26 @@ public class ResultActivity extends Activity {
 
             double principalTotal = (loan / (monthly * year * 12)) * 100;
             double InterestTotal = (((monthly * year * 12) - loan) / (monthly * year * 12)) * 100;
+            double percentTotal = ((monthly * year * 12) - loan);
 
-            String totalText = String.format("%10.2f", (monthly * year * 12));
-            String percentText = String.format("%10.2f", ((monthly * year * 12) - loan));
+            String totalText = formatter.format(monthly * year * 12);
+            //String percentText = String.format("%10.2f", ((monthly * year * 12) - loan));
             result =  "case 2: Even Total Payments"
-                            + "\n" +
-                            "Results:"
                             + "\n" +
                             "Payment every month	    "+ monthlyText
                             + "\n" +
-                            "Total interest: "+ InterestTotal
+                            "Total interest             "+ formatter.format(percentTotal)
                             + "\n" +
-                            "Total of " + String.valueOf(year * 12) + "  payments   "+ totalText
+                            "Total of " + (int)(year * 12) + "  payments   "+ totalText
                                                                                 //formatter.format();
                             + "\n" +
                             "---------------------------"
                             + "\n" +
-                            "Principal             " + "4"
+                            "Principal             " + String.format("%10.1f", (principalTotal)) + "%"
                             + "\n" +
-                            "Interest               " + "5"
-                            + "\n" +
-                            "6";
-                    /*
+                            "Interest               " + String.format("%10.1f", (InterestTotal)) + "%"
+                            ;
 
-                   "1",// ,
-                   "2",// totalText,
-                   "3", //percentText,
-                   "4",// String.format("%10.2f", principalTotal),
-                   "5", // String.format("%10.2f", InterestTotal),
-                   "6" /*geturl(
-                            "a",
-                            (int)(((monthly * year * 12) - loan )),
-                            loan,
-                            loan,
-                            (int)year,
-                            interestpercent)
-
-                   );
-                         */
         }
         catch (Exception ex)
         {
@@ -124,29 +103,83 @@ public class ResultActivity extends Activity {
     }
 
 
+    private String GetResultLoanEvenPrincipalPayments(int loan, double year, double interestpercent)
+    {
+        NumberFormat formatter = NumberFormat.getCurrencyInstance();
+        double interest = interestpercent / 100;
+        double percTotal = 0;
+        double monthlyTotal = 0;
+
+        double amountRest = loan; //остаток основного долга
+        double mainloan = (loan / (year * 12)); //fixed
+        double percent = (amountRest * interest / 12);
+        double monthly = mainloan + percent;
+        String monthlyFirstText = formatter.format(monthly);
+        double lastmonth = 0;
+
+        for (int i = 1; i < (year * 12) + 1; i++)
+        {
+            amountRest -= mainloan;
+            percTotal += percent;
+            monthlyTotal += monthly;
+            percent = (loan - (i * (loan / (year * 12)))) * (interest / 12);
+            lastmonth = monthly;
+            monthly = mainloan + percent;
+        }
+
+        double principalTotal = (loan  / monthlyTotal) * 100;
+        double InterestTotal = (percTotal  / monthlyTotal) * 100;
+
+        String monthlyTotalText = formatter.format(monthlyTotal);
+        String percTotalText = formatter.format(percTotal);
+        String monthlyLastText = formatter.format(lastmonth);
+
+        return "case 1: Even Principal Payments"
+                + "\n" +
+        "Pay in the first month  " + monthlyFirstText
+                + "\n" +
+        "Pay in the last month  " + monthlyLastText
+                + "\n" +
+        "Total interest	       " + percTotalText
+                + "\n" +
+        "Total of " + (int)(year * 12) +  " payments  " + monthlyTotalText
+                + "\n" +
+        "---------------------------"
+                        + "\n" +
+        "Principal             " + String.format("%10.1f", (principalTotal)) + "%"
+                + "\n" +
+        "Interest               " + String.format("%10.1f", (InterestTotal)) + "%"
+        + "\n" +
+        "==================================";
+
+
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         try {
-            String result =  GetResultLoanEvenTotalPayments(Prefs.getLoan(this), Prefs.getTerm(this), Prefs.getInterest(this));
-            textbody.setText(result);
+            textbody.setText(GetResultLoanEvenPrincipalPayments(Prefs.getLoan(this), Prefs.getTerm(this), Prefs.getInterest(this)));
+            NumberFormat formatter = NumberFormat.getCurrencyInstance();
+            String title =  formatter.format(Prefs.getLoan(this)) + " for " + Prefs.getTerm(this) + " years and " + Prefs.getInterest(this) + "%";
+            this.setTitle(title);
 
-            wv.getSettings().setJavaScriptEnabled(true);
-            wv.getSettings().setAllowContentAccess(true);
-            wv.getSettings().setAllowFileAccess(true);
+            textbody2.setText(GetResultLoanEvenTotalPayments(Prefs.getLoan(this), Prefs.getTerm(this), Prefs.getInterest(this)));
 
-            // Get the Android assets folder path
-            String folderPath = "file:android_asset/";
+            chart.getSettings().setJavaScriptEnabled(true);
+            chart.getSettings().setAllowContentAccess(true);
+            chart.getSettings().setAllowFileAccess(true);
 
-            // Get the HTML file name
-            String fileName = "calculator.html";
+            diagram.getSettings().setJavaScriptEnabled(true);
+            diagram.getSettings().setAllowContentAccess(true);
+            diagram.getSettings().setAllowFileAccess(true);
 
-            // Get the exact file location
-            String file = folderPath + fileName;
 
-            // Render the HTML file on WebView
-            //
-            wv.loadUrl(file);
+            chart.loadUrl("http://lena.pw/chart.html?a=" + Prefs.getLoan(this) + "&y=" + Prefs.getTerm(this) +"&i=" + Prefs.getInterest(this) + "&f=0&t=b");
+
+
+            diagram.loadUrl("http://lena.pw/chart.html?a=" + Prefs.getLoan(this) + "&y=" + Prefs.getTerm(this) +"&i=" + Prefs.getInterest(this) + "&f=0&t=a");
+
         }
         catch (Exception ex)
         {
@@ -158,16 +191,16 @@ public class ResultActivity extends Activity {
 
     private String geturl(String type, int per, int pri, int a, int y, double i)
     {
-        return "urlurl!!!";
-        /*return String.format("Chart 1:"
+
+        return "Chart 1:"
                 + "\n" +
-        "http://lena.pw/chart.html?a={0}&y={1}&i={2}&f={3}&t={4}"
-                + "\n" +
-        "Chart 2:"
-                + "\n" +
-        "http://lena.pw/diagram.html?per={5}&pri={6}&fee={7}", a, y, i, 0, type,
-        per, pri, 0);
-        */
+        "http://lena.pw/chart.html?a=" + a +
+                "&y=" + y + "&i= " + i + " &f=0&t=" + type +
+                "\n" +
+        "Chart 2:"   +
+                "\n" +
+        "http://lena.pw/diagram.html?per=" + per + "&pri=" + pri + "&fee=0";
+
     }
 
     /*
