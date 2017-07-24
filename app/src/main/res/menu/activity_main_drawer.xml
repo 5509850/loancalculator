@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
+        <item android:title="Payments Schedule">
+            <menu>
         <item
-            android:id="@+id/nav_schedule"
+            android:id="@+id/nav_schedule_epp"
             android:icon="@drawable/ic_action_schedule"
-            android:title="@string/payment_schedule" />
+            android:title="@string/payment_schedule_epp" />
+        <item
+            android:id="@+id/nav_schedule_etp"
+            android:icon="@drawable/ic_action_schedule"
+            android:title="@string/payment_schedule_etp" />
         <item
             android:id="@+id/nav_chart"
             android:icon="@drawable/ic_action_chart"
@@ -14,7 +21,10 @@
             android:id="@+id/nav_diagram"
             android:icon="@drawable/ic_action_diagram"
             android:title="@string/payment_diagram" />
+            </menu>
+        </item>
     </group>
+
 
     <item android:title="Communicate">
         <menu>

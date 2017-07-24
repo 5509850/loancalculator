@@ -225,6 +225,7 @@ public class MainActivity extends AppCompatActivity
 
     private void LoadDefaultSavedData() {
         try {
+            this.setTitle(R.string.loan_summary);
             _loan = Prefs.getLoan(this);
             _term = Prefs.getTerm(this);
             _interest = Prefs.getInterest(this);
@@ -368,9 +369,23 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_schedule) {
+        if (id == R.id.nav_schedule_epp) {
 
-            Toast.makeText(this, "schedule", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Even Principal Payments Schedule", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent();
+            intent.setClass(this, PaymentActivity.class);
+            Bundle b = new Bundle();
+            b.putString("KEY_TYPE_PAYMENT", "EPPS");
+            intent.putExtras(b);
+            startActivity(intent);
+        } else if (id == R.id.nav_schedule_etp) {
+
+            Intent intent = new Intent();
+            intent.setClass(this, PaymentActivity.class);
+            Bundle b = new Bundle();
+            b.putString("KEY_TYPE_PAYMENT", "ETPS");
+            intent.putExtras(b);
+            startActivity(intent);
 
         } else if (id == R.id.nav_chart) {
 
@@ -383,6 +398,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_send) {
 
+            startActivity(new Intent(this, ResultActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

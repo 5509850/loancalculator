@@ -7,18 +7,19 @@
     <string name="action_settings">Settings</string>
 
 
-    <string name="payment_schedule">Payments schedule</string>
+    <string name="payment_schedule_epp">Even Principal</string>
+    <string name="payment_schedule_etp">Even Total</string>
     <string name="payment_chart">Chart</string>
     <string name="payment_diagram">Diagram</string>
 
     <string name="loan">Loan $</string>
-    <string name="loan_summary">Loan Amount: $</string>
+    <string name="loan_summary">1) Loan Amount: $</string>
 
     <string name="term">Term</string>
-    <string name="term_summary">Loan Term in Years:</string>
+    <string name="term_summary">2) Loan Term in Years:</string>
 
     <string name="interest">Interest $</string>
-    <string name="interest_summary">Interest rate per year(%):</string>
+    <string name="interest_summary">3) Interest rate per year(%):</string>
 
 
     <string name="pref_loan_type">Types of loan repayment schedules</string>
@@ -30,6 +31,8 @@
 
     <string name="zero">0</string>
     <string name="title_activity_result">Result</string>
+    <string name="title_activity_payment">PaymentActivity</string>
+    <string name="wait_please">Wait please</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 
@@ -119,4 +122,6 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
+    <string name="title_activity_total">TotalActivity</string>
+
 </resources>

@@ -1,39 +1,30 @@
 package pw.lena.loancalculator;
 
-import android.app.Activity;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
-import android.widget.LinearLayout;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.Principal;
 import java.text.NumberFormat;
 
-import static android.R.attr.y;
-import static java.sql.Types.ARRAY;
-import static pw.lena.loancalculator.MainActivity.Status.Interest;
-import static pw.lena.loancalculator.MainActivity.Status.Loan;
-import static pw.lena.loancalculator.R.id.textbody;
-import static pw.lena.loancalculator.R.string.result;
-
-public class ResultActivity extends AppCompatActivity  {
+public class ResultActivity extends AppCompatActivity implements View.OnClickListener
+{
 
     private static final String TAG = "ResultActivity";
-    private TextView textbody, textbody2;
+    private TextView text_title, textbody, textbody2;
     private  WebView chart;
     private  WebView diagram;
+    private Context context = this;
+    private Button exit;
 
 
     @Override
@@ -44,14 +35,24 @@ public class ResultActivity extends AppCompatActivity  {
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
 
+            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    finish();
+                }
+            });
+
             textbody = (TextView) findViewById(R.id.textbody);
             textbody2 = (TextView) findViewById(R.id.textbody2);
+            text_title = (TextView) findViewById(R.id.text_title);
             //final LinearLayout linearLayoutResult = (LinearLayout) findViewById(R.id.linearLayoutResult);
 
             chart = (WebView) findViewById(R.id.chartWebView);
             diagram = (WebView) findViewById(R.id.diagramWebView);
 
-
+            exit = (Button)findViewById(R.id.btn_exit);
+            exit.setOnClickListener(this);
         }
         catch (Exception ex)
         {
@@ -60,7 +61,15 @@ public class ResultActivity extends AppCompatActivity  {
         }
     }
 
-    private String GetResultLoanEvenTotalPayments(int loan, double year, double interestpercent)
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.btn_exit)
+        {
+           finish();
+        }
+    }
+
+        private String GetResultLoanEvenTotalPayments(int loan, double year, double interestpercent)
     {
         String result = "ok";
         NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -76,7 +85,8 @@ public class ResultActivity extends AppCompatActivity  {
 
             String totalText = formatter.format(monthly * year * 12);
             //String percentText = String.format("%10.2f", ((monthly * year * 12) - loan));
-            result =  "case 2: Even Total Payments"
+            result =  "\n" +
+                            "case 2: Even Total Payments"
                             + "\n" +
                             "Payment every month	    "+ monthlyText
                             + "\n" +
@@ -85,7 +95,7 @@ public class ResultActivity extends AppCompatActivity  {
                             "Total of " + (int)(year * 12) + "  payments   "+ totalText
                                                                                 //formatter.format();
                             + "\n" +
-                            "---------------------------"
+                            "----------------------------------"
                             + "\n" +
                             "Principal             " + String.format("%10.1f", (principalTotal)) + "%"
                             + "\n" +
@@ -134,7 +144,8 @@ public class ResultActivity extends AppCompatActivity  {
         String percTotalText = formatter.format(percTotal);
         String monthlyLastText = formatter.format(lastmonth);
 
-        return "case 1: Even Principal Payments"
+        return "\n" +
+        "case 1: Even Principal Payments"
                 + "\n" +
         "Pay in the first month  " + monthlyFirstText
                 + "\n" +
@@ -144,7 +155,7 @@ public class ResultActivity extends AppCompatActivity  {
                 + "\n" +
         "Total of " + (int)(year * 12) +  " payments  " + monthlyTotalText
                 + "\n" +
-        "---------------------------"
+        "----------------------------------"
                         + "\n" +
         "Principal             " + String.format("%10.1f", (principalTotal)) + "%"
                 + "\n" +
@@ -162,6 +173,7 @@ public class ResultActivity extends AppCompatActivity  {
             textbody.setText(GetResultLoanEvenPrincipalPayments(Prefs.getLoan(this), Prefs.getTerm(this), Prefs.getInterest(this)));
             NumberFormat formatter = NumberFormat.getCurrencyInstance();
             String title =  formatter.format(Prefs.getLoan(this)) + " for " + Prefs.getTerm(this) + " years and " + Prefs.getInterest(this) + "%";
+            text_title.setText(title);
             this.setTitle(title);
 
             textbody2.setText(GetResultLoanEvenTotalPayments(Prefs.getLoan(this), Prefs.getTerm(this), Prefs.getInterest(this)));
@@ -175,11 +187,15 @@ public class ResultActivity extends AppCompatActivity  {
             diagram.getSettings().setAllowFileAccess(true);
 
 
-            chart.loadUrl("http://lena.pw/chart.html?a=" + Prefs.getLoan(this) + "&y=" + Prefs.getTerm(this) +"&i=" + Prefs.getInterest(this) + "&f=0&t=b");
-
-
-            diagram.loadUrl("http://lena.pw/chart.html?a=" + Prefs.getLoan(this) + "&y=" + Prefs.getTerm(this) +"&i=" + Prefs.getInterest(this) + "&f=0&t=a");
-
+            if (haveNetworkConnectionType(context) != 0)
+            {
+                chart.loadUrl("http://lena.pw/chart.html?a=" + Prefs.getLoan(this) + "&y=" + Prefs.getTerm(this) +"&i=" + Prefs.getInterest(this) + "&f=0&t=b");
+                diagram.loadUrl("http://lena.pw/chart.html?a=" + Prefs.getLoan(this) + "&y=" + Prefs.getTerm(this) +"&i=" + Prefs.getInterest(this) + "&f=0&t=a");
+            }
+            else
+            {
+                Toast.makeText(this, "No Internet connection", Toast.LENGTH_LONG);
+            }
         }
         catch (Exception ex)
         {
@@ -201,6 +217,58 @@ public class ResultActivity extends AppCompatActivity  {
                 "\n" +
         "http://lena.pw/diagram.html?per=" + per + "&pri=" + pri + "&fee=0";
 
+    }
+
+    private int  haveNetworkConnectionType(Context context)
+    {
+        //return int
+        //0 - no network
+        //1 - only wifi
+        //2 - only 3G
+        int WIFI = 1;
+        int GGG = 2;
+        int type = 0;
+
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if (netInfo != null)
+        {
+            if (netInfo.getTypeName().equalsIgnoreCase("WIFI"))
+            {
+                if (netInfo.isConnected())
+                {
+                    haveConnectedWifi = true;
+                    //Log.v("WIFI CONNECTION ", "AVAILABLE");
+                    //Toast.makeText(this,"WIFI CONNECTION is Available", Toast.LENGTH_LONG).show();
+                    type = WIFI;
+                } else
+                {
+                    // Log.v("WIFI CONNECTION ", "NOT AVAILABLE");
+                    //Toast.makeText(this,"WIFI CONNECTION is NOT AVAILABLE", Toast.LENGTH_LONG).show();
+                }
+            }
+            if (netInfo.getTypeName().equalsIgnoreCase("MOBILE"))
+            {
+                if (netInfo.isConnected())
+                {
+                    haveConnectedMobile = true;
+                    // Log.v("MOBILE INTERNET CONNECTION ", "AVAILABLE");
+                    //Toast.makeText(this,"MOBILE INTERNET CONNECTION - AVAILABLE", Toast.LENGTH_LONG).show();
+                    type = GGG;
+                } else
+                {
+                    // Log.v("MOBILE INTERNET CONNECTION ", "NOT AVAILABLE");
+                    //Toast.makeText(this,"MOBILE INTERNET CONNECTION - NOT AVAILABLE", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+        if (!haveConnectedWifi && !haveConnectedMobile)
+            return 0;
+
+        return type;
     }
 
     /*
