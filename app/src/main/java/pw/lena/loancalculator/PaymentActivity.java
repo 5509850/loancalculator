@@ -138,13 +138,12 @@ public class PaymentActivity extends AppCompatActivity {
         sb.append("--------------------------------------------------------------------");
         sb.append("\n");
         sb.append("Total:");
-        sb.append("\t\t\t | ");
-        sb.append(0);
-        sb.append("\t Interest: ");
+        sb.append("\n");
+        sb.append("Interest: ");
         sb.append(formatter.format(percTotal));
-        sb.append("\t Principal: ");
+        sb.append("\nPrincipal: ");
         sb.append(formatter.format(mainTotal));
-        sb.append("\t Total: ");
+        sb.append("\n Payment: ");
         sb.append(formatter.format(monthlyTotal));
         sb.append("\n");
         tv_payment.setText(sb);
@@ -222,13 +221,13 @@ public class PaymentActivity extends AppCompatActivity {
         sb.append("--------------------------------------------------------------------");
         sb.append("\n");
         sb.append("Total:");
-        sb.append("\t\t\t | ");
-        sb.append(0);
-        sb.append("\t Interest: ");
+        sb.append("\n ");
+
+        sb.append("\nInterest: ");
         sb.append(formatter.format(percTotal));
-        sb.append("\t Principal: ");
+        sb.append("\nPrincipal: ");
         sb.append(formatter.format(mainTotal));
-        sb.append("\t Total: ");
+        sb.append("\nTotal: ");
         sb.append(formatter.format(monthlyTotal));
         sb.append("\n");
         tv_payment.setText(sb);
