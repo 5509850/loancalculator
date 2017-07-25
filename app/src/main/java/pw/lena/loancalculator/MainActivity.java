@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -28,8 +29,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.text.NumberFormat;
+
 import static pw.lena.loancalculator.Prefs.getInterest;
 import static pw.lena.loancalculator.Prefs.getTerm;
+import static pw.lena.loancalculator.R.id.textView;
+import static pw.lena.loancalculator.utils.haveNetworkConnectionType;
 
 
 public class MainActivity extends AppCompatActivity
@@ -159,6 +163,7 @@ public class MainActivity extends AppCompatActivity
             Log.e(TAG, "error PreviousStep" + ex.getMessage());
         }
         Log.i(TAG, "status is after PreviousStep" + status);
+        SetBoldCurrentStatus();
         return false;
     }
 
@@ -212,6 +217,7 @@ public class MainActivity extends AppCompatActivity
                     LoadDefaultSavedData();
                 }
             }
+            SetBoldCurrentStatus();
         }
         catch (Exception ex)
         {
@@ -223,9 +229,28 @@ public class MainActivity extends AppCompatActivity
                 .setAction("Action", null).show();
     }
 
+    private void SaveCurrentData()
+    {
+        try {
+            if (status == Status.Loan) {
+                SaveLoan();}
+            else
+                if (status == Status.Term) {
+                    currentInput = "";
+                    SaveTerm();}
+                else if (status == Status.Interest) {
+                    SaveInterest();}
+        }
+        catch (Exception ex)
+        {
+            Log.e(TAG, "error SaveCurrentData " + ex.getMessage());
+        }
+    }
+
     private void LoadDefaultSavedData() {
         try {
             this.setTitle(R.string.loan_summary);
+            SetBoldCurrentStatus();
             _loan = Prefs.getLoan(this);
             _term = Prefs.getTerm(this);
             _interest = Prefs.getInterest(this);
@@ -243,6 +268,32 @@ public class MainActivity extends AppCompatActivity
         {
             Toast.makeText(context, ex.getMessage(), Toast.LENGTH_LONG);
             Log.e(TAG, "error LoadDefaultSavedData " + ex.getMessage());
+        }
+    }
+
+    private void SetBoldCurrentStatus() {
+
+        if (status == Status.Loan) {
+            loan.setTypeface(null, Typeface.BOLD);
+            interest.setTypeface(null, Typeface.ITALIC);
+            term.setTypeface(null, Typeface.ITALIC);
+        } else if (status == Status.Term)
+        {
+            loan.setTypeface(null, Typeface.ITALIC);
+            interest.setTypeface(null, Typeface.ITALIC);
+            term.setTypeface(null, Typeface.BOLD);
+        }
+        else if (status == Status.Interest)
+        {
+            loan.setTypeface(null, Typeface.ITALIC);
+            interest.setTypeface(null, Typeface.BOLD);
+            term.setTypeface(null, Typeface.ITALIC);
+        }
+        else
+        {
+            loan.setTypeface(null, Typeface.NORMAL);
+            interest.setTypeface(null, Typeface.NORMAL);
+            term.setTypeface(null, Typeface.NORMAL);
         }
     }
 
@@ -289,6 +340,10 @@ public class MainActivity extends AppCompatActivity
             {
                 return;
             }
+        if (_term > 100)
+        {
+            _term = 100;
+        }
             try{
                 Prefs.setTerm(this, _term);
             }
@@ -332,7 +387,24 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        SetMenuEnable();
         return true;
+    }
+
+    private void SetMenuEnable()
+    {
+        try{
+            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+            Menu menuNav=navigationView.getMenu();
+
+            boolean enable = haveNetworkConnectionType(context) != 0;
+            menuNav.findItem(R.id.nav_chart_epp).setEnabled(enable);
+            menuNav.findItem(R.id.nav_chart_etp).setEnabled(enable);
+        }
+        catch (Exception ex)
+        {
+            Log.e(TAG, "error SetMenuEnable" + ex.getMessage());
+        }
     }
 
     @Override
@@ -370,7 +442,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_schedule_epp) {
-
+            SaveCurrentData();
             //Toast.makeText(this, "Even Principal Payments Schedule", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent();
             intent.setClass(this, PaymentActivity.class);
@@ -379,7 +451,7 @@ public class MainActivity extends AppCompatActivity
             intent.putExtras(b);
             startActivity(intent);
         } else if (id == R.id.nav_schedule_etp) {
-
+            SaveCurrentData();
             Intent intent = new Intent();
             intent.setClass(this, PaymentActivity.class);
             Bundle b = new Bundle();
@@ -387,18 +459,41 @@ public class MainActivity extends AppCompatActivity
             intent.putExtras(b);
             startActivity(intent);
 
-        } else if (id == R.id.nav_chart) {
+        } else if (id == R.id.nav_chart_epp) {
+            SaveCurrentData();
+            if (haveNetworkConnectionType(context) != 0)
+            {
+                Intent intent = new Intent();
+                intent.setClass(this, ChartActivity.class);
+                Bundle b = new Bundle();
+                b.putString("KEY_TYPE", "EPPS");
+                intent.putExtras(b);
+                startActivity(intent);
+            }
+             else
+            {
+                Toast.makeText(this, "No Internet connection", Toast.LENGTH_LONG);
+            }
 
-            Toast.makeText(this, "chart", Toast.LENGTH_SHORT).show();
-
-        } else if (id == R.id.nav_diagram) {
-
-            Toast.makeText(this, "diagram", Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_chart_etp) {
+            SaveCurrentData();
+            if (haveNetworkConnectionType(context) != 0)
+            {
+                Intent intent = new Intent();
+                intent.setClass(this, ChartActivity.class);
+                Bundle b = new Bundle();
+                b.putString("KEY_TYPE", "ETPS");
+                intent.putExtras(b);
+                startActivity(intent);
+            }
+            else
+            {
+                Toast.makeText(this, "No Internet connection", Toast.LENGTH_LONG);
+            }
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
 
-            startActivity(new Intent(this, ResultActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -425,14 +520,7 @@ public class MainActivity extends AppCompatActivity
 //            Toast.makeText(this, "Warning! The maximum value for it\n" +
 //                    "\n", Toast.LENGTH_SHORT).show();
 //            Toast.makeText(this, "", Toast.LENGTH_SHORT).cancel();
-            mVibrator.vibrate(
-                    new long[]{0l, VIBRATE_MILLIS,
-                            50l, VIBRATE_MILLIS,
-                            50l, VIBRATE_MILLIS},
-                    -1);
-            Animation fade = AnimationUtils.loadAnimation(context,
-                    R.anim.fade_in);
-            mainLayer.startAnimation(fade);
+           Warning();
             return;
         }
        switch (view.getId())
@@ -540,6 +628,18 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    private void Warning()
+    {
+        mVibrator.vibrate(
+                new long[]{0l, VIBRATE_MILLIS,
+                        50l, VIBRATE_MILLIS,
+                        50l, VIBRATE_MILLIS},
+                -1);
+        Animation fade = AnimationUtils.loadAnimation(context,
+                R.anim.fade_in);
+        mainLayer.startAnimation(fade);
+    }
+
     private void ShowInfo(int id) {
         try {
             if (status == Status.Loan) {
@@ -577,6 +677,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void Pressed(String digit) {
+        if (CheckOverFlow(digit))
+        {
+            Warning();
+            return;
+        }
         try {
             currentInput += digit;
             int i = Integer.parseInt(currentInput);
@@ -593,6 +698,25 @@ public class MainActivity extends AppCompatActivity
         {
             Log.e(TAG, "error Pressed" + ex.getMessage());
         }
+    }
+
+    private boolean CheckOverFlow(String digit)
+    {
+        String currentI = currentInput;
+        currentI += digit;
+        int i = Integer.parseInt(currentI);
+        if (status == Status.Term) {
+            if (i > 100)
+            {
+                return true;
+            }
+        } else
+            if (status == Status.Interest) {
+                if (i > 1000) {
+                    return true;
+                }
+            }
+        return false;
     }
 
     private boolean isDigitFull(String dig)

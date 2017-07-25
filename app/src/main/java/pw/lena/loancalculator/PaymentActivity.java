@@ -90,7 +90,7 @@ public class PaymentActivity extends AppCompatActivity {
 
         StringBuilder sb = new StringBuilder("Loan " + title);
         sb.append("\n"); sb.append("\n");
-        sb.append("Even Principal Payments Schedule");
+        sb.append("Even Total Payments Schedule");
         sb.append("\n");
         sb.append("\n");
         sb.append("--------------------------------------------------------------------");
@@ -136,15 +136,27 @@ public class PaymentActivity extends AppCompatActivity {
             mainloan = monthly - percent;
         }
         sb.append("--------------------------------------------------------------------");
-        sb.append("\n");
-        sb.append("Total:");
-        sb.append("\n");
-        sb.append("Interest: ");
+        sb.append("\nTotal: ");
+        sb.append(formatter.format(monthlyTotal));
+        Double overpay = (monthlyTotal / mainTotal) * 100;
+        sb.append(" (");
+        sb.append(String.format("%10.2f", overpay));
+        sb.append(" %)");
+        sb.append("\n ");
+
+        sb.append("\nInterest: ");
         sb.append(formatter.format(percTotal));
+        Double percpart = (percTotal / monthlyTotal) * 100;
+        sb.append(" (");
+        sb.append(String.format("%10.2f", percpart));
+        sb.append(" %)");
         sb.append("\nPrincipal: ");
         sb.append(formatter.format(mainTotal));
-        sb.append("\n Payment: ");
-        sb.append(formatter.format(monthlyTotal));
+        Double mainTotalpart = 100 - percpart;
+        sb.append(" (");
+        sb.append(String.format("%10.2f", mainTotalpart));
+        sb.append(" %)");
+
         sb.append("\n");
         tv_payment.setText(sb);
         //(getResources().getString(R.string.large_text));
@@ -219,16 +231,27 @@ public class PaymentActivity extends AppCompatActivity {
             monthly = mainloan + percent;
         }
         sb.append("--------------------------------------------------------------------");
-        sb.append("\n");
-        sb.append("Total:");
+        sb.append("\nTotal: ");
+        sb.append(formatter.format(monthlyTotal));
+        Double overpay = (monthlyTotal / mainTotal) * 100;
+        sb.append(" (");
+        sb.append(String.format("%10.2f", overpay));
+        sb.append(" %)");
         sb.append("\n ");
 
         sb.append("\nInterest: ");
         sb.append(formatter.format(percTotal));
+        Double percpart = (percTotal / monthlyTotal) * 100;
+        sb.append(" (");
+        sb.append(String.format("%10.2f", percpart));
+        sb.append(" %)");
         sb.append("\nPrincipal: ");
         sb.append(formatter.format(mainTotal));
-        sb.append("\nTotal: ");
-        sb.append(formatter.format(monthlyTotal));
+        Double mainTotalpart = 100 - percpart;
+        sb.append(" (");
+        sb.append(String.format("%10.2f", mainTotalpart));
+        sb.append(" %)");
+
         sb.append("\n");
         tv_payment.setText(sb);
     }

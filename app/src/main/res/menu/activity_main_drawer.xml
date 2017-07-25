@@ -14,13 +14,13 @@
             android:icon="@drawable/ic_action_schedule"
             android:title="@string/payment_schedule_etp" />
         <item
-            android:id="@+id/nav_chart"
+            android:id="@+id/nav_chart_epp"
             android:icon="@drawable/ic_action_chart"
-            android:title="@string/payment_chart" />
+            android:title="@string/payment_chart_epp" />
         <item
-            android:id="@+id/nav_diagram"
+            android:id="@+id/nav_chart_etp"
             android:icon="@drawable/ic_action_diagram"
-            android:title="@string/payment_diagram" />
+            android:title="@string/payment_chart_etp" />
             </menu>
         </item>
     </group>
