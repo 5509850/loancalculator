@@ -13,6 +13,7 @@ import android.provider.Settings;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -26,13 +27,13 @@ import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.text.NumberFormat;
 
 import static pw.lena.loancalculator.Prefs.getInterest;
 import static pw.lena.loancalculator.Prefs.getTerm;
-import static pw.lena.loancalculator.R.id.textView;
 import static pw.lena.loancalculator.utils.haveNetworkConnectionType;
 
 
@@ -53,6 +54,8 @@ public class MainActivity extends AppCompatActivity
 
     private Vibrator mVibrator;
     private static final int VIBRATE_MILLIS = 150;
+
+    private ShareActionProvider mShareActionProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -387,15 +390,24 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        /*MenuItem item = menu.findItem(R.id.nav_share);
+        mShareActionProvider = (ShareActionProvider) item.getActionProvider();
+        */
         SetMenuEnable();
         return true;
     }
+
+    // Call to update the share intent
+    private void setShareIntent(Intent shareIntent) {
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(shareIntent);
+        }}
 
     private void SetMenuEnable()
     {
         try{
             NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-            Menu menuNav=navigationView.getMenu();
+            Menu menuNav = navigationView.getMenu();
 
             boolean enable = haveNetworkConnectionType(context) != 0;
             menuNav.findItem(R.id.nav_chart_epp).setEnabled(enable);

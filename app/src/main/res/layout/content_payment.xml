@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/tv_payment"
         android:layout_margin="@dimen/text_margin"
+        android:layout_gravity="center_horizontal"
         android:text="@string/wait_please" />
 
 
