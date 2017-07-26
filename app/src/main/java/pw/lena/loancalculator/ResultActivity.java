@@ -1,11 +1,11 @@
 package pw.lena.loancalculator;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import java.text.NumberFormat;
 
+import static pw.lena.loancalculator.MainActivity.Status.Interest;
 import static pw.lena.loancalculator.utils.haveNetworkConnectionType;
 
 public class ResultActivity extends AppCompatActivity implements View.OnClickListener
@@ -43,6 +44,15 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
                 }
             });
 
+            FloatingActionButton fab_share = (FloatingActionButton) findViewById(R.id.fab_share);
+            fab_share.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Sharing();
+
+                }
+            });
+
             textbody = (TextView) findViewById(R.id.textbody);
             textbody2 = (TextView) findViewById(R.id.textbody2);
             text_title = (TextView) findViewById(R.id.text_title);
@@ -56,7 +66,7 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
         }
         catch (Exception ex)
         {
-            Log.e(TAG, "error onCreate " + ex.getMessage());
+           // Log.e(TAG, "error onCreate " + ex.getMessage());
             Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG);
         }
     }
@@ -67,6 +77,15 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
         {
            finish();
         }
+    }
+
+    private void Sharing()
+    {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, text_title.getText() + "\n" + textbody.getText() + "\n" + textbody2.getText());
+        sendIntent.setType("text/plain");
+        startActivity(sendIntent);
     }
 
         private String GetResultLoanEvenTotalPayments(int loan, double year, double interestpercent)
@@ -86,26 +105,25 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
             String totalText = formatter.format(monthly * year * 12);
             //String percentText = String.format("%10.2f", ((monthly * year * 12) - loan));
             result =  "\n" +
-                            "case 2: Even Total Payments"
+                   getString(R.string.case2)
                             + "\n" +
-                            "Payment every month	    "+ monthlyText
+                   getString(R.string.payment_every_month) + ":	"+ monthlyText
                             + "\n" +
-                            "Total interest             "+ formatter.format(percentTotal)
+                    getString(R.string.total_interest) + ": "+ formatter.format(percentTotal)
                             + "\n" +
-                            "Total of " + (int)(year * 12) + "  payments   "+ totalText
+                    getString(R.string.totalof) + " " + (int)(year * 12) + "  " + getString(R.string.payments) + "  " + totalText
                                                                                 //formatter.format();
                             + "\n" +
                             "----------------------------------"
                             + "\n" +
-                            "Principal             " + String.format("%10.1f", (principalTotal)) + "%"
+                    getString(R.string.principal)       + ": " + String.format("%10.1f", (principalTotal)) + "%"
                             + "\n" +
-                            "Interest               " + String.format("%10.1f", (InterestTotal)) + "%"
-                            ;
+                    getString(R.string.interests) + ": " + String.format("%10.1f", (InterestTotal)) + "%";
 
         }
         catch (Exception ex)
         {
-            Log.e(TAG, "error GetResultLoanEvenTotalPayments " + ex.getMessage());
+           // Log.e(TAG, "error GetResultLoanEvenTotalPayments " + ex.getMessage());
             Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG);
         }
 
@@ -145,21 +163,21 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
         String monthlyLastText = formatter.format(lastmonth);
 
         return "\n" +
-        "case 1: Even Principal Payments"
+                getString(R.string.case1)
                 + "\n" +
-        "Pay in the first month  " + monthlyFirstText
+                getString(R.string.payinthefirstmonth) + ":  " + monthlyFirstText
                 + "\n" +
-        "Pay in the last month  " + monthlyLastText
+                getString(R.string.payinthelasttmonth) +  ":  " + monthlyLastText
                 + "\n" +
-        "Total interest	       " + percTotalText
+                getString(R.string.total_interest) + ": " + percTotalText
                 + "\n" +
-        "Total of " + (int)(year * 12) +  " payments  " + monthlyTotalText
+                getString(R.string.totalof) + " " + (int)(year * 12) +  "  " + getString(R.string.payments) + "  " + monthlyTotalText
                 + "\n" +
         "----------------------------------"
                         + "\n" +
-        "Principal             " + String.format("%10.1f", (principalTotal)) + "%"
+                getString(R.string.principal)       + ": " + String.format("%10.1f", (principalTotal)) + "%"
                 + "\n" +
-        "Interest               " + String.format("%10.1f", (InterestTotal)) + "%"
+                getString(R.string.interests) + ": " + String.format("%10.1f", (InterestTotal)) + "%"
         + "\n" +
         "==================================";
 
@@ -172,7 +190,8 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
         try {
             textbody.setText(GetResultLoanEvenPrincipalPayments(Prefs.getLoan(this), Prefs.getTerm(this), Prefs.getInterest(this)));
             NumberFormat formatter = NumberFormat.getCurrencyInstance();
-            String title =  formatter.format(Prefs.getLoan(this)) + " for " + Prefs.getTerm(this) + " years and " + Prefs.getInterest(this) + "%";
+            String title =  getString(R.string.loan) + " " + formatter.format(Prefs.getLoan(this)) + " " + getString(R.string.fors) + " " + Prefs.getTerm(this) +
+                    " " + getString(R.string.yearsand) + " " + Prefs.getInterest(this) + "%";
             text_title.setText(title);
             this.setTitle(title);
 
@@ -194,12 +213,12 @@ public class ResultActivity extends AppCompatActivity implements View.OnClickLis
             }
             else
             {
-                Toast.makeText(this, "No Internet connection", Toast.LENGTH_LONG);
+                Toast.makeText(this, getString(R.string.nointernet), Toast.LENGTH_LONG);
             }
         }
         catch (Exception ex)
         {
-            Log.e(TAG, "error onResume " + ex.getMessage());
+          //  Log.e(TAG, "error onResume " + ex.getMessage());
             Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG);
         }
 

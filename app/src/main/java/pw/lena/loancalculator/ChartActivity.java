@@ -2,27 +2,16 @@ package pw.lena.loancalculator;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.Window;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import java.text.NumberFormat;
-
-import static pw.lena.loancalculator.R.id.text_title;
-import static pw.lena.loancalculator.R.id.textbody;
-import static pw.lena.loancalculator.R.id.textbody2;
 import static pw.lena.loancalculator.utils.haveNetworkConnectionType;
 
 public class ChartActivity extends AppCompatActivity implements View.OnClickListener {
@@ -57,12 +46,14 @@ public class ChartActivity extends AppCompatActivity implements View.OnClickList
         exit.setOnClickListener(this);
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
         try {
             NumberFormat formatter = NumberFormat.getCurrencyInstance();
-            String title =  formatter.format(Prefs.getLoan(this)) + " for " + Prefs.getTerm(this) + " years and " + Prefs.getInterest(this) + "%";
+            String title =  getString(R.string.loan) + " " + formatter.format(Prefs.getLoan(this)) + " " + getString(R.string.fors) + " " + Prefs.getTerm(this) +
+                    " " + getString(R.string.yearsand) + " " + Prefs.getInterest(this) + "%";
             this.setTitle(title);
 
            /* mWebView.getSettings().setJavaScriptEnabled(true);
@@ -88,7 +79,7 @@ public class ChartActivity extends AppCompatActivity implements View.OnClickList
             }
             else
             {
-                Toast.makeText(this, "No Internet connection", Toast.LENGTH_LONG);
+                Toast.makeText(this, getString(R.string.nointernet), Toast.LENGTH_LONG);
             }
         }
         catch (Exception ex)
@@ -114,14 +105,15 @@ public class ChartActivity extends AppCompatActivity implements View.OnClickList
             public void onProgressChanged(WebView view, int progress)
             {
 
-                activity.setTitle("Wait please");
+                activity.setTitle(getString(R.string.wait_please));
                 pbHeaderProgress.setProgress(progress * 100);//
                 activity.setProgress(progress * 100);
 
                 if(progress == 100)
                 {
                     NumberFormat formatter = NumberFormat.getCurrencyInstance();
-                    String title =  formatter.format(Prefs.getLoan(context)) + " for " + Prefs.getTerm(context) + " years and " + Prefs.getInterest(context) + "%";
+                    String title =  getString(R.string.loan) + " " + formatter.format(Prefs.getLoan(context)) + " " + getString(R.string.fors) + " " + Prefs.getTerm(context) +
+                            " " + getString(R.string.yearsand) + " " + Prefs.getInterest(context) + "%";
                     activity.setTitle(title);
                     pbHeaderProgress.setVisibility(View.INVISIBLE);
                 }

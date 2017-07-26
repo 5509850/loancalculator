@@ -1,0 +1,56 @@
+<resources>
+    <string name="app_name">Кредит</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">Настройки</string>
+    <string name="payment_schedule_epp">Платежи Дифференцированные</string>
+    <string name="payment_schedule_etp">Платежи Аннуитетные</string>
+    <string name="payment_chart_epp">График Дифференцированные</string>
+    <string name="payment_chart_etp">График Аннуитетные</string>
+    <string name="loan">Кредит</string>
+    <string name="loan_summary">1) Сумма кредита: руб</string>
+    <string name="term">Срок</string>
+    <string name="term_summary">2) Срок кредита гг:</string>
+    <string name="interest">Проценты </string>
+    <string name="interest_summary">3) Годовая проц. ставка (%):</string>
+    <string name="pref_loan_type">Тип кредита</string>
+    <string name="emptyval">Введите корректные даннные</string>
+    <string name="loanterm">Срок кредита гг</string>
+    <string name="interest_desc">Годовая проц. ставка(%):</string>
+    <string name="result">Итого</string>
+    <string name="zero">0</string>
+    <string name="title_activity_result">Итого</string>
+    <string name="title_activity_payment">Платежи</string>
+    <string name="wait_please">Ждите...</string>
+    <string name="title_activity_total">Итого</string>
+
+    <string name="share">Отправить</string>
+    <string name="payments_schedule">Расписание платежей</string>
+    <string name="amount">Сумма: </string>
+    <string name="years">гг</string>
+    <string name="currency">р</string>
+    <string name="fors">на</string>
+    <string name="yearsand">лет </string>
+    <string name="nointernet">Нет соединения с Интернет</string>
+    <string name="case2">вариант 2: Аннуитетные платежи</string>
+    <string name="payment_every_month">Ежемесячные платежи</string>
+    <string name="total_interest">Итого проценты</string>
+
+    <string name="totalof">Всего</string>
+    <string name="payments">платежей</string>
+    <string name="principal">Осн. долг</string>
+    <string name="interests">Проценты</string>
+
+    <string name="case1">вариант 1: Дифференцированные платежи</string>
+    <string name="payinthefirstmonth">Первый платеж</string>
+    <string name="payinthelasttmonth">Последний платеж</string>
+    <string name="even_principal_payments_schedule">График дифференцированных платежей</string>
+
+    <string name="month">Месяц</string>
+    <string name="balance">Остаток</string>
+    <string name="payment">Платеж</string>
+    <string name="total">Итого:</string>
+    <string name="eventotal">График аннуитетных платежей</string>
+
+</resources>

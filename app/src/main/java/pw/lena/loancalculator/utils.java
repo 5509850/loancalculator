@@ -4,10 +4,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-/**
- * Created by Aliaksandr_Harbunou on 7/25/2017.
- */
-
 public class utils {
 
     public static int  haveNetworkConnectionType(Context context)

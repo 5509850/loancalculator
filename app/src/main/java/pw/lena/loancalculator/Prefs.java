@@ -2,14 +2,9 @@ package pw.lena.loancalculator;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-
-import java.util.ArrayList;
 
 /**
  * Created by Aliaksandr_Harbunou on 6/13/2017.
@@ -42,31 +37,6 @@ public class Prefs extends PreferenceActivity
     {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
-//        final ArrayList<CheckBoxPreference> alViewMode = new ArrayList<>();
-//
-//        Preference.OnPreferenceClickListener listener = new Preference.OnPreferenceClickListener() {
-//            @Override
-//            public boolean onPreferenceClick(Preference preference) {
-//                for (CheckBoxPreference cbp : alViewMode) {
-//                    if (!cbp.getKey().equals(preference.getKey()) && cbp.isChecked()) {
-//                        cbp.setChecked(false);
-//                    }
-//                    else if (cbp.getKey().equals(preference.getKey()) && !cbp.isChecked()) {
-//                        cbp.setChecked(true);
-//                    }
-//                }
-//                return false;
-//            }
-//        };
-//
-//        CheckBoxPreference eventotal = (CheckBoxPreference) getPreferenceManager().findPreference("eventotal");
-//        eventotal.setOnPreferenceClickListener(listener);
-//
-//        CheckBoxPreference evenproncipal = (CheckBoxPreference) getPreferenceManager().findPreference("evenproncipal");
-//        evenproncipal.setOnPreferenceClickListener(listener);
-//
-//        alViewMode.add(eventotal);
-//        alViewMode.add(evenproncipal);
     }
 
     public static Integer getLoan(Context context)

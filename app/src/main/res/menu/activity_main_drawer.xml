@@ -3,7 +3,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
-        <item android:title="Payments Schedule">
+        <item android:title="@string/payments_schedule">
             <menu>
         <item
             android:id="@+id/nav_schedule_epp"
@@ -21,23 +21,21 @@
             android:id="@+id/nav_chart_etp"
             android:icon="@drawable/ic_action_diagram"
             android:title="@string/payment_chart_etp" />
+         <item
+            android:id="@+id/nav_result"
+            android:icon="@drawable/ic_action_schedule"
+            android:title="@string/result" />
+                <item
+                    android:id="@+id/nav_share"
+                    android:icon="@drawable/ic_menu_share"
+                    android:title="@string/share" />
             </menu>
         </item>
+
     </group>
 
 
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:actionProviderClass= "android.widget.ShareActionProvider"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
-        </menu>
-    </item>
+
+
 
 </menu>

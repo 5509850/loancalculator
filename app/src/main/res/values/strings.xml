@@ -3,37 +3,71 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="action_settings">Settings</string>
-
-
     <string name="payment_schedule_epp">Sch. Even Principal</string>
     <string name="payment_schedule_etp">Sch. Even Total</string>
     <string name="payment_chart_epp">Chart Even Principal</string>
     <string name="payment_chart_etp">Chart Even Total</string>
-
     <string name="loan">Loan $</string>
     <string name="loan_summary">1) Loan Amount: $</string>
-
     <string name="term">Term</string>
     <string name="term_summary">2) Loan Term in Years:</string>
-
-    <string name="interest">Interest $</string>
+    <string name="interest">Interest </string>
     <string name="interest_summary">3) Interest rate per year(%):</string>
-
-
     <string name="pref_loan_type">Types of loan repayment schedules</string>
     <string name="emptyval">Please enter valid value</string>
     <string name="loanterm">Loan term in years</string>
     <string name="interest_desc">Interest rate per year(%):</string>
-    <string name="result">Result:</string>
-
-
+    <string name="result">Result</string>
     <string name="zero">0</string>
     <string name="title_activity_result">Result</string>
     <string name="title_activity_payment">PaymentActivity</string>
     <string name="wait_please">Wait please</string>
-
     <string name="title_activity_total">TotalActivity</string>
+
+    <string name="share">Share</string>
+    <string name="payments_schedule">Payments Schedule</string>
+    <string name="amount">Amount: </string>
+    <string name="years">Years</string>
+    <string name="currency">$</string>
+    <string name="fors">for</string>
+    <string name="yearsand">years and</string>
+    <string name="nointernet">No Internet connection</string>
+    <string name="case2">case 2: Even Total Payments</string>
+    <string name="payment_every_month">Payment every month</string>
+    <string name="total_interest">Total interest</string>
+
+    <string name="totalof">Total of</string>
+    <string name="payments">payments</string>
+    <string name="principal">Principal</string>
+    <string name="interests">Interest</string>
+
+    <string name="case1">case 1: Even Principal Payments</string>
+    <string name="payinthefirstmonth">Pay in the first month</string>
+    <string name="payinthelasttmonth">Pay in the last month</string>
+    <string name="even_principal_payments_schedule">Even Principal Payments Schedule</string>
+
+    <string name="month">Month</string>
+    <string name="balance">Balance</string>
+    <string name="payment">Payment</string>
+    <string name="total">Total:</string>
+    <string name="eventotal">Even Total Payments Schedule</string>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 </resources>

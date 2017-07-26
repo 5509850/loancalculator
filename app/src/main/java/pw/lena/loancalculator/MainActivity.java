@@ -13,7 +13,6 @@ import android.provider.Settings;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -27,13 +26,13 @@ import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.text.NumberFormat;
 
 import static pw.lena.loancalculator.Prefs.getInterest;
 import static pw.lena.loancalculator.Prefs.getTerm;
+import static pw.lena.loancalculator.R.string.years;
 import static pw.lena.loancalculator.utils.haveNetworkConnectionType;
 
 
@@ -54,8 +53,6 @@ public class MainActivity extends AppCompatActivity
 
     private Vibrator mVibrator;
     private static final int VIBRATE_MILLIS = 150;
-
-    private ShareActionProvider mShareActionProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,7 +122,7 @@ public class MainActivity extends AppCompatActivity
 
     private boolean PreviousStep() {
         String mess = "Replace with your own action2";
-        Log.i(TAG, "status is before PreviousStep" + status);
+   //     Log.i(TAG, "status is before PreviousStep" + status);
         try{
         if (status == Status.Loan)
         {
@@ -147,7 +144,7 @@ public class MainActivity extends AppCompatActivity
         {
             SaveInterest();
             mess = getString(R.string.term_summary);
-            _term = getTerm(context);
+            _term = Prefs.getTerm(context);
             currentInput = _term.toString();
             display.setText(NumberFormat.getIntegerInstance().format(_term));
             this.setTitle(R.string.term_summary);
@@ -163,18 +160,18 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception ex)
         {
-            Log.e(TAG, "error PreviousStep" + ex.getMessage());
+          //  Log.e(TAG, "error PreviousStep" + ex.getMessage());
         }
-        Log.i(TAG, "status is after PreviousStep" + status);
+       // Log.i(TAG, "status is after PreviousStep" + status);
         SetBoldCurrentStatus();
         return false;
     }
 
     private void NextStep(View view) {
-        Log.i(TAG, "before NextStep status is " + status);
+     //   Log.i(TAG, "before NextStep status is " + status);
         String mess = "Replace with your own action";
         try {
-            if (currentInput == null || currentInput.equals("")) {
+            if (currentInput == null || currentInput.equals("") || currentInput.equals("0")) {
                 Snackbar.make(view, getString(R.string.emptyval), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 mVibrator.vibrate(
@@ -188,14 +185,14 @@ public class MainActivity extends AppCompatActivity
                 return;
             }
 
-            Log.w(TAG, "before NextStep currentInput " + currentInput);
+        //    Log.w(TAG, "before NextStep currentInput " + currentInput);
 
             if (status == Status.Loan) {
                 SaveLoan();
                 status = Status.Term;
                 mess = getString(R.string.loanterm);
-                currentInput = Prefs.getTerm(context).toString();
-                display.setText(NumberFormat.getIntegerInstance().format(Prefs.getTerm(context)));
+                currentInput = getTerm(context).toString();
+                display.setText(NumberFormat.getIntegerInstance().format(getTerm(context)));
                 this.setTitle(R.string.term_summary);
             } else {
                 if (status == Status.Term) {
@@ -203,17 +200,20 @@ public class MainActivity extends AppCompatActivity
                     SaveTerm();
                     status = Status.Interest;
                     mess = getString(R.string.interest_desc);
-                    currentInput =  getInterest(context).toString();
-                    display.setText(NumberFormat.getIntegerInstance().format(Prefs.getInterest(context)));
+                    currentInput =  Prefs.getInterest(context).toString();
+                    display.setText(NumberFormat.getIntegerInstance().format(getInterest(context)));
                     this.setTitle(R.string.interest_summary);
                 } else if (status == Status.Interest) {
                     SaveInterest();
-                    status = Status.Loan;
-                    Animation fade = AnimationUtils.loadAnimation(context,
-                            R.anim.fade_in);
-                    mainLayer.startAnimation(fade);
-                    LoadDefaultSavedData();
-                    startActivity(new Intent(this, ResultActivity.class));
+                    if(CheckValidData())
+                    {
+                        status = Status.Loan;
+                        Animation fade = AnimationUtils.loadAnimation(context,
+                                R.anim.fade_in);
+                        mainLayer.startAnimation(fade);
+                        LoadDefaultSavedData();
+                        startActivity(new Intent(this, ResultActivity.class));
+                    }
                 }
                 else if (status == Status.Ready)
                 {
@@ -224,12 +224,23 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception ex)
         {
-            Log.e(TAG, "error NextStep " + ex.getMessage());
+          //  Log.e(TAG, "error NextStep " + ex.getMessage());
         }
-        Log.i(TAG, "after NextStep status is " + status);
-        Log.w(TAG, "after NextStep currentInput " + currentInput);
+      //  Log.i(TAG, "after NextStep status is " + status);
+      //  Log.w(TAG, "after NextStep currentInput " + currentInput);
         Snackbar.make(view, mess, Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
+    }
+
+    private boolean CheckValidData()
+    {
+        boolean valid =  Prefs.getLoan(this)!= 0 && Prefs.getTerm(this)!= 0 && Prefs.getInterest(this)!= 0;
+        if (!valid)
+        {
+            Warning();
+            Toast.makeText(context, getString(R.string.emptyval), Toast.LENGTH_LONG);
+        }
+        return valid;
     }
 
     private void SaveCurrentData()
@@ -246,7 +257,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception ex)
         {
-            Log.e(TAG, "error SaveCurrentData " + ex.getMessage());
+           // Log.e(TAG, "error SaveCurrentData " + ex.getMessage());
         }
     }
 
@@ -255,13 +266,13 @@ public class MainActivity extends AppCompatActivity
             this.setTitle(R.string.loan_summary);
             SetBoldCurrentStatus();
             _loan = Prefs.getLoan(this);
-            _term = Prefs.getTerm(this);
-            _interest = Prefs.getInterest(this);
+            _term = getTerm(this);
+            _interest = getInterest(this);
             currentInput = _loan.toString();
 
-            loan.setText("Loan: $" + NumberFormat.getIntegerInstance().format(_loan));
-            term.setText("Term: " + _term + " years");
-            interest.setText("Interest:" + _interest + "%");
+            loan.setText(getString(R.string.amount) + ": " + NumberFormat.getIntegerInstance().format(_loan) + " " + getString(R.string.currency));
+            term.setText(getString(R.string.term) + ": " + _term + " " + getString(years));
+            interest.setText(getString(R.string.interest) + ": " + _interest + "%");
             if (_loan != 0)
             {
                 display.setText(NumberFormat.getIntegerInstance().format(_loan));
@@ -270,7 +281,7 @@ public class MainActivity extends AppCompatActivity
         catch (Exception ex)
         {
             Toast.makeText(context, ex.getMessage(), Toast.LENGTH_LONG);
-            Log.e(TAG, "error LoadDefaultSavedData " + ex.getMessage());
+          //  Log.e(TAG, "error LoadDefaultSavedData " + ex.getMessage());
         }
     }
 
@@ -319,30 +330,22 @@ public class MainActivity extends AppCompatActivity
         }
             catch(Exception ex)
             {
-                Log.e(TAG, "error SaveStatus " + ex.getMessage());
+               // Log.e(TAG, "error SaveStatus " + ex.getMessage());
             }
     }
 
     private void SaveLoan() {
-            if (_loan == 0)
-            {
-                return;
-            }
             try {
                 Prefs.setLoan(this, _loan);
             }
             catch (Exception ex)
             {
-                Log.e(TAG, "error SaveLoan " + ex.getMessage());
+             //   Log.e(TAG, "error SaveLoan " + ex.getMessage());
                 Toast.makeText(context, ex.getMessage(), Toast.LENGTH_LONG);
             }
     }
 
     private void SaveTerm() {
-            if (_term == 0)
-            {
-                return;
-            }
         if (_term > 100)
         {
             _term = 100;
@@ -352,22 +355,18 @@ public class MainActivity extends AppCompatActivity
             }
             catch (Exception ex)
             {
-                Log.e(TAG, "error SaveTerm " + ex.getMessage());
+              //  Log.e(TAG, "error SaveTerm " + ex.getMessage());
                 Toast.makeText(context, ex.getMessage(), Toast.LENGTH_LONG);
             }
     }
 
     private void SaveInterest() {
-            if (_interest == 0)
-            {
-                return;
-            }
             try {
                 Prefs.setInterest(this, _interest);
             }
             catch (Exception ex)
             {
-                Log.e(TAG, "error SaveInterest " + ex.getMessage());
+              //  Log.e(TAG, "error SaveInterest " + ex.getMessage());
                 Toast.makeText(context, ex.getMessage(), Toast.LENGTH_LONG);
             }
     }
@@ -390,18 +389,9 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-        /*MenuItem item = menu.findItem(R.id.nav_share);
-        mShareActionProvider = (ShareActionProvider) item.getActionProvider();
-        */
         SetMenuEnable();
         return true;
     }
-
-    // Call to update the share intent
-    private void setShareIntent(Intent shareIntent) {
-        if (mShareActionProvider != null) {
-            mShareActionProvider.setShareIntent(shareIntent);
-        }}
 
     private void SetMenuEnable()
     {
@@ -415,23 +405,12 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception ex)
         {
-            Log.e(TAG, "error SetMenuEnable" + ex.getMessage());
+          //  Log.e(TAG, "error SetMenuEnable" + ex.getMessage());
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            StartPrefs();
-//            return true;
-       // }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -456,24 +435,29 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_schedule_epp) {
             SaveCurrentData();
             //Toast.makeText(this, "Even Principal Payments Schedule", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent();
-            intent.setClass(this, PaymentActivity.class);
-            Bundle b = new Bundle();
-            b.putString("KEY_TYPE_PAYMENT", "EPPS");
-            intent.putExtras(b);
-            startActivity(intent);
+            if (CheckValidData())
+            {
+                Intent intent = new Intent();
+                intent.setClass(this, PaymentActivity.class);
+                Bundle b = new Bundle();
+                b.putString("KEY_TYPE_PAYMENT", "EPPS");
+                intent.putExtras(b);
+                startActivity(intent);
+            }
         } else if (id == R.id.nav_schedule_etp) {
             SaveCurrentData();
-            Intent intent = new Intent();
-            intent.setClass(this, PaymentActivity.class);
-            Bundle b = new Bundle();
-            b.putString("KEY_TYPE_PAYMENT", "ETPS");
-            intent.putExtras(b);
-            startActivity(intent);
-
+            if (CheckValidData())
+            {
+                Intent intent = new Intent();
+                intent.setClass(this, PaymentActivity.class);
+                Bundle b = new Bundle();
+                b.putString("KEY_TYPE_PAYMENT", "ETPS");
+                intent.putExtras(b);
+                startActivity(intent);
+            }
         } else if (id == R.id.nav_chart_epp) {
             SaveCurrentData();
-            if (haveNetworkConnectionType(context) != 0)
+            if (haveNetworkConnectionType(context) != 0 && CheckValidData())
             {
                 Intent intent = new Intent();
                 intent.setClass(this, ChartActivity.class);
@@ -489,7 +473,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_chart_etp) {
             SaveCurrentData();
-            if (haveNetworkConnectionType(context) != 0)
+            if (haveNetworkConnectionType(context) != 0 && CheckValidData())
             {
                 Intent intent = new Intent();
                 intent.setClass(this, ChartActivity.class);
@@ -502,12 +486,20 @@ public class MainActivity extends AppCompatActivity
             {
                 Toast.makeText(this, "No Internet connection", Toast.LENGTH_LONG);
             }
+        } else if (id == R.id.nav_result) {
+            SaveCurrentData();
+            if (CheckValidData())
+            {
+                LoadDefaultSavedData();
+                startActivity(new Intent(this, ResultActivity.class));
+            }
+
         } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+            if (CheckValidData())
+            {
+                Sharing();
+            }
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -595,6 +587,13 @@ public class MainActivity extends AppCompatActivity
             {
                 currentInput = "";
                 display.setText(R.string.zero);
+                if (status == Status.Loan) {
+                    _loan = 0;
+                } else if (status == Status.Term) {
+                    _term = 0;
+                } else if (status == Status.Interest) {
+                    _interest = 0;
+                }
                 break;
             }
             case R.id.btn_back:
@@ -640,6 +639,118 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    private void Sharing()
+    {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        NumberFormat formatter = NumberFormat.getCurrencyInstance();
+        String title =  getString(R.string.loan) + " " + formatter.format(Prefs.getLoan(this)) + " " + getString(R.string.fors) + " " + getTerm(this)
+                + " " + getString(R.string.yearsand) + " " +
+                + getInterest(this) + "%";
+        sendIntent.putExtra(Intent.EXTRA_TEXT,
+                title + "\n" +
+                GetResultLoanEvenPrincipalPayments(Prefs.getLoan(this), getTerm(this), getInterest(this)) + "\n" +
+                GetResultLoanEvenTotalPayments(Prefs.getLoan(this), getTerm(this), getInterest(this)));
+        sendIntent.setType("text/plain");
+        startActivity(sendIntent);
+    }
+
+    private String GetResultLoanEvenTotalPayments(int loan, double year, double interestpercent)
+    {
+        String result = "ok";
+        NumberFormat formatter = NumberFormat.getCurrencyInstance();
+        try {
+            double interest = interestpercent / 100;
+            double monthly = (loan * (interest / 12)) / (1 - (1 / Math.pow(1 + (interest / 12), (year * 12)))); // fixed
+
+            String monthlyText = formatter.format(monthly);
+
+            double principalTotal = (loan / (monthly * year * 12)) * 100;
+            double InterestTotal = (((monthly * year * 12) - loan) / (monthly * year * 12)) * 100;
+            double percentTotal = ((monthly * year * 12) - loan);
+
+            String totalText = formatter.format(monthly * year * 12);
+            //String percentText = String.format("%10.2f", ((monthly * year * 12) - loan));
+            result =  "\n" +
+                    getString(R.string.case2)
+                    + "\n" +
+                    getString(R.string.payment_every_month) + ": "+ monthlyText
+                    + "\n" +
+                    getString(R.string.total_interest) + ": " + formatter.format(percentTotal)
+                    + "\n" +
+                    getString(R.string.totalof) + " " + (int)(year * 12) + "  " + getString(R.string.payments) + "  " + totalText
+                    //formatter.format();
+                    + "\n" +
+                    "----------------------------------"
+                    + "\n" +
+                    getString(R.string.principal)       + ": " + String.format("%10.1f", (principalTotal)) + "%"
+                    + "\n" +
+                    getString(R.string.interests) + ": " + String.format("%10.1f", (InterestTotal)) + "%";
+
+        }
+        catch (Exception ex)
+        {
+            // Log.e(TAG, "error GetResultLoanEvenTotalPayments " + ex.getMessage());
+            Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG);
+        }
+
+        return result;
+    }
+
+
+    private String GetResultLoanEvenPrincipalPayments(int loan, double year, double interestpercent)
+    {
+        NumberFormat formatter = NumberFormat.getCurrencyInstance();
+        double interest = interestpercent / 100;
+        double percTotal = 0;
+        double monthlyTotal = 0;
+
+        double amountRest = loan; //остаток основного долга
+        double mainloan = (loan / (year * 12)); //fixed
+        double percent = (amountRest * interest / 12);
+        double monthly = mainloan + percent;
+        String monthlyFirstText = formatter.format(monthly);
+        double lastmonth = 0;
+
+        for (int i = 1; i < (year * 12) + 1; i++)
+        {
+            amountRest -= mainloan;
+            percTotal += percent;
+            monthlyTotal += monthly;
+            percent = (loan - (i * (loan / (year * 12)))) * (interest / 12);
+            lastmonth = monthly;
+            monthly = mainloan + percent;
+        }
+
+        double principalTotal = (loan  / monthlyTotal) * 100;
+        double InterestTotal = (percTotal  / monthlyTotal) * 100;
+
+        String monthlyTotalText = formatter.format(monthlyTotal);
+        String percTotalText = formatter.format(percTotal);
+        String monthlyLastText = formatter.format(lastmonth);
+
+        return "\n" +
+                getString(R.string.case1)
+                + "\n" +
+                getString(R.string.payinthefirstmonth) + ":  " + monthlyFirstText
+                + "\n" +
+                getString(R.string.payinthelasttmonth) +  ":  " + monthlyLastText
+                + "\n" +
+                getString(R.string.total_interest) + ": " + percTotalText
+                + "\n" +
+                getString(R.string.totalof) + " " + (int)(year * 12) +  "  " + getString(R.string.payments) + "  " + monthlyTotalText
+                + "\n" +
+                "----------------------------------"
+                + "\n" +
+                getString(R.string.principal)       + ": " + String.format("%10.1f", (principalTotal)) + "%"
+                + "\n" +
+                getString(R.string.interests) + ": " + String.format("%10.1f", (InterestTotal)) + "%"
+                + "\n" +
+                "==================================";
+
+
+    }
+
     private void Warning()
     {
         mVibrator.vibrate(
@@ -656,7 +767,7 @@ public class MainActivity extends AppCompatActivity
         try {
             if (status == Status.Loan) {
                 if (!currentInput.equals("")) {
-                    loan.setText("Amount: $" + NumberFormat.getIntegerInstance().format(_loan));
+                    loan.setText(getString(R.string.amount) + ": "+ NumberFormat.getIntegerInstance().format(_loan) + " " + getString(R.string.currency));
                 } else {
                     if (id == R.id.btn_back || id == R.id.btn_clear) {
                         loan.setText("");
@@ -664,7 +775,7 @@ public class MainActivity extends AppCompatActivity
                 }
             } else if (status == Status.Term) {
                 if (!currentInput.equals("")) {
-                    term.setText("Term: " + _term + " years");
+                    term.setText(getString(R.string.term) + ": " +  _term + " " + getString(years));
                 } else {
                     if (id == R.id.btn_back || id == R.id.btn_clear) {
                         term.setText("");
@@ -672,7 +783,7 @@ public class MainActivity extends AppCompatActivity
                 }
             } else if (status == Status.Interest) {
                 if (!currentInput.equals("")) {
-                    interest.setText("Interest: " + _interest + "%");
+                    interest.setText(getString(R.string.interest) + ": " + _interest + "%");
                 } else {
                     if (id == R.id.btn_back || id == R.id.btn_clear) {
                         interest.setText("");
@@ -682,8 +793,8 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception ex)
         {
-            Log.e(TAG, "error ShowInfo" + ex.getMessage());
-            Log.i(TAG, "status is" + status);
+          //  Log.e(TAG, "error ShowInfo" + ex.getMessage());
+          //  Log.i(TAG, "status is" + status);
         }
 
     }
@@ -708,7 +819,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch (Exception ex)
         {
-            Log.e(TAG, "error Pressed" + ex.getMessage());
+           // Log.e(TAG, "error Pressed" + ex.getMessage());
         }
     }
 
@@ -758,6 +869,7 @@ public class MainActivity extends AppCompatActivity
         }
         return str;
     }
+
 
     //---------------------------------------GPS
     private void turnGPSOn(){
