@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity
 
 
     private boolean PreviousStep() {
-        String mess = "Replace with your own action2";
+        String mess = getString(R.string.app_name);
    //     Log.i(TAG, "status is before PreviousStep" + status);
         try{
         if (status == Status.Loan)
@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity
         {
             SaveTerm();
             status = Status.Loan;
-            mess = getString(R.string.loan);
+            mess = getString(R.string.loan_summary);
             _loan = Prefs.getLoan(context);
             currentInput = _loan.toString();
             display.setText(NumberFormat.getIntegerInstance().format(_loan));

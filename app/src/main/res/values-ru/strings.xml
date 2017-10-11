@@ -4,9 +4,9 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_settings">Настройки</string>
-    <string name="payment_schedule_epp">Платежи Дифференцированные</string>
-    <string name="payment_schedule_etp">Платежи Аннуитетные</string>
-    <string name="payment_chart_epp">График Дифференцированные</string>
+    <string name="payment_schedule_epp">Платежи умен.(Дифф)</string>
+    <string name="payment_schedule_etp">Платежи равные (Анну) </string>
+    <string name="payment_chart_epp">График Дифференц.</string>
     <string name="payment_chart_etp">График Аннуитетные</string>
     <string name="loan">Кредит</string>
     <string name="loan_summary">1) Сумма кредита: руб</string>
